@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+        "@binance/connector": "^2.0.0-rc.3",
+        "axios": "^1.2.1",
+        "fs": "^0.0.1-security"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.18"
+    }
+}
