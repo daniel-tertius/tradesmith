@@ -1,4 +1,4 @@
-# my-eerste-toep
+# tradesmith
 
 ## Project setup
 ```

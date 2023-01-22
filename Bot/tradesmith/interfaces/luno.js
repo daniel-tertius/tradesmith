@@ -184,27 +184,40 @@ var jsonToURLEncodedForm = function (json) {
 };
 function trade(type, btc_price, btc_amount) {
     return __awaiter(this, void 0, void 0, function () {
-        var url, options, response, success;
+        var url, token, encodedToken, options, response, success;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     url = "https://api.luno.com/api/1/postorder";
+                    token = "".concat(config_1["default"].api.luno.key, ":").concat(config_1["default"].api.luno.secret);
+                    encodedToken = Buffer.from(token).toString('base64');
                     options = {
                         headers: {
-                            "Accept": 'application/json',
-                            "Accept-Charset": 'utf-8',
-                            "Authorization": "Basic ".concat(btoa(config_1["default"].api.luno.key + ':' + config_1["default"].api.luno.secret)),
+                            "Accept": "application/json",
+                            "Accept-Charset": "utf-8",
+                            // "Authorization": "Basic " + encodedToken,
                             "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
                         },
-                        body: jsonToURLEncodedForm({
+                        body: {
                             pair: "XBTZAR",
                             type: type,
                             volume: btc_amount,
                             price: btc_price
-                        }),
+                        },
                         method: "POST"
                     };
-                    return [4 /*yield*/, fetch(url, options)];
+                    return [4 /*yield*/, axios_1["default"].post(url, options, {
+                            headers: {
+                                "Accept": "application/json",
+                                "Accept-Charset": "utf-8",
+                                // "Authorization": "Basic " + encodedToken,
+                                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+                            },
+                            auth: {
+                                username: config_1["default"].api.luno.key,
+                                password: config_1["default"].api.luno.secret
+                            }
+                        })];
                 case 1:
                     response = _a.sent();
                     success = response.status.toString().startsWith("2");

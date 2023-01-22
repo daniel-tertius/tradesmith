@@ -36,45 +36,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+exports.run = void 0;
 var config_1 = require("./helpers/config");
 var interface_1 = require("./interface");
 var functions_1 = require("./helpers/functions");
-(0, functions_1.setFileName)("Output/Output_".concat(new Date().toLocaleString('fr-CA')).replace(/ /g, "_"));
-// Define the class we will use to trade with.
-var trader = new interface_1["default"](config_1["default"].trader_type);
-// Set the loop to do the trading after each interval.
-var loop = setInterval(run, config_1["default"].minutes_interval_loop * 60 * 1000);
+var loop;
+var trader;
 // Initialise other variables
 var PRINT_PRICE = false;
 // @ts-ignore
 var PROCESS = process;
-// Handling Arguments
-if (PROCESS.argv[2] != null && PROCESS.argv[2] === "reset") {
-    (0, functions_1.print)("Resetting...");
-    trader.status.set("open");
-}
 function run() {
     return __awaiter(this, void 0, void 0, function () {
         var error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, main()];
+                    (0, functions_1.setFileName)("Output/Output_".concat(new Date().toLocaleString('fr-CA')).replace(/ /g, "_"));
+                    // Define the class we will use to trade with.
+                    trader = new interface_1["default"](config_1["default"].trader_type);
+                    // Handling Arguments
+                    if (PROCESS.argv[2] != null && PROCESS.argv[2] === "reset") {
+                        (0, functions_1.print)("Resetting...");
+                        trader.status.set("open");
+                    }
+                    _a.label = 1;
                 case 1:
-                    _a.sent();
-                    return [3 /*break*/, 3];
+                    _a.trys.push([1, 3, , 4]);
+                    loop = setInterval(main, config_1["default"].minutes_interval_loop * 60 * 1000);
+                    return [4 /*yield*/, main()];
                 case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3:
                     error_1 = _a.sent();
                     console.error("\u274C ".concat(error_1.stack || JSON.stringify(error_1, null, 2)));
                     clearInterval(loop);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
-// Run the first instance.
+exports.run = run;
 run();
 function main() {
     return __awaiter(this, void 0, void 0, function () {

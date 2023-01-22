@@ -104,23 +104,38 @@ const jsonToURLEncodedForm = (json = {}) =>
 
 async function trade(type: 'ASK' | 'BID', btc_price: number, btc_amount: number) {
   const url = "https://api.luno.com/api/1/postorder"
+
+  const token = `${config.api.luno.key}:${config.api.luno.secret}`;
+  const encodedToken = Buffer.from(token).toString('base64');
+
   const options = {
     headers: {
-      "Accept": 'application/json',
-      "Accept-Charset": 'utf-8',
-      "Authorization": `Basic ${btoa(config.api.luno.key + ':' + config.api.luno.secret)}`,
+      "Accept": "application/json",
+      "Accept-Charset": "utf-8",
+      // "Authorization": "Basic " + encodedToken,
       "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
     },
-    body: jsonToURLEncodedForm({
+    body: {
       pair: "XBTZAR",
       type,
       volume: btc_amount,
       price: btc_price
-    }),
+    },
     method: "POST"
   }
 
-  const response = await fetch(url, options);
+  const response = await axios.post(url, options, {
+    headers: {
+      "Accept": "application/json",
+      "Accept-Charset": "utf-8",
+      // "Authorization": "Basic " + encodedToken,
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    auth: {
+      username: config.api.luno.key,
+      password: config.api.luno.secret
+    }
+  });
   const success = response.status.toString().startsWith("2");
 
   console.log(success ? "Success :)" : "Failed :(");

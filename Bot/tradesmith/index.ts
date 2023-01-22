@@ -4,34 +4,33 @@ import config from './helpers/config';
 import Interface from './interface';
 import { print, setFileName } from './helpers/functions'
 
-setFileName(`Output/Output_${new Date().toLocaleString('fr-CA')}`.replace(/ /g, "_"));
-
-// Define the class we will use to trade with.
-const trader = new Interface(config.trader_type);
-
-// Set the loop to do the trading after each interval.
-const loop = setInterval(run, config.minutes_interval_loop * 60 * 1000);
-
+let loop: NodeJS.Timer
+let trader: Interface;
 // Initialise other variables
 let PRINT_PRICE = false;
 // @ts-ignore
 const PROCESS = process;
-// Handling Arguments
-if (PROCESS.argv[2] != null && PROCESS.argv[2] === "reset") {
-    print("Resetting...");
-    trader.status.set("open");
-}
 
-async function run() {
+export async function run() {
+    setFileName(`Output/Output_${new Date().toLocaleString('fr-CA')}`.replace(/ /g, "_"));
+
+    // Define the class we will use to trade with.
+    trader = new Interface(config.trader_type);
+    // Handling Arguments
+    if (PROCESS.argv[2] != null && PROCESS.argv[2] === "reset") {
+        print("Resetting...");
+        trader.status.set("open");
+    }
+
+    // Set the loop to do the trading after each interval.
     try {
+        loop = setInterval(main, config.minutes_interval_loop * 60 * 1000);
         await main();
     } catch (error) {
         console.error(`❌ ${error.stack || JSON.stringify(error, null, 2)}`);
         clearInterval(loop);
     }
 }
-
-// Run the first instance.
 run();
 
 async function main() {
