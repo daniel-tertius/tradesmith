@@ -1,23 +1,14 @@
-'use strict'
-
-import config from './helpers/config';
-import Interface from './interface';
-import { print, setFileName } from './helpers/functions'
+import Interface from './classes/interface';
 
 let loop: NodeJS.Timer
 let trader: Interface;
-// Initialise other variables
-let PRINT_PRICE = false;
-// @ts-ignore
-const PROCESS = process;
 
 export async function run() {
-    setFileName(`Output/Output_${new Date().toLocaleString('fr-CA')}`.replace(/ /g, "_"));
-
     // Define the class we will use to trade with.
-    trader = new Interface(config.trader_type);
+    trader = new Interface();
+
     // Handling Arguments
-    if (PROCESS.argv[2] != null && PROCESS.argv[2] === "reset") {
+    if (process.argv[2] != null && process.argv[2] === "reset") {
         print("Resetting...");
         trader.status.set("open");
     }
@@ -29,6 +20,7 @@ export async function run() {
     } catch (error) {
         console.error(`❌ ${error.stack || JSON.stringify(error, null, 2)}`);
         clearInterval(loop);
+        await trader.end()
     }
 }
 run();

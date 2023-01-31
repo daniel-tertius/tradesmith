@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -52,28 +52,28 @@ function run() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    (0, functions_1.setFileName)("Output/Output_".concat(new Date().toLocaleString('fr-CA')).replace(/ /g, "_"));
                     // Define the class we will use to trade with.
                     trader = new interface_1["default"](config_1["default"].trader_type);
-                    // Handling Arguments
-                    if (PROCESS.argv[2] != null && PROCESS.argv[2] === "reset") {
-                        (0, functions_1.print)("Resetting...");
-                        trader.status.set("open");
-                    }
-                    _a.label = 1;
+                    return [4 /*yield*/, trader.doDBThings()];
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _a.sent();
+                    return [2 /*return*/];
+                case 2:
+                    _a.trys.push([2, 4, , 6]);
                     loop = setInterval(main, config_1["default"].minutes_interval_loop * 60 * 1000);
                     return [4 /*yield*/, main()];
-                case 2:
-                    _a.sent();
-                    return [3 /*break*/, 4];
                 case 3:
+                    _a.sent();
+                    return [3 /*break*/, 6];
+                case 4:
                     error_1 = _a.sent();
                     console.error("\u274C ".concat(error_1.stack || JSON.stringify(error_1, null, 2)));
                     clearInterval(loop);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [4 /*yield*/, trader.end(ww)];
+                case 5:
+                    _a.sent();
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });

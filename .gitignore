@@ -1,8 +1,10 @@
-*/Output/*
+Bot/tradesmith/Output/*
 .DS_Store
 node_modules
 /dist
-
+.env
+Bot/tradesmith/Output/*
+Bot/tradesmith/*.js
 
 # local env files
 .env.local

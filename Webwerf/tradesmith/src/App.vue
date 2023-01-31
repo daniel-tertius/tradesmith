@@ -61,6 +61,9 @@
 </template>
 
 <script>
+
+
+
 export default {
   name: "App",
   components: {},
@@ -73,7 +76,7 @@ export default {
     };
   },
   methods: {
-    toggleBotRunning() {
+    async toggleBotRunning() {
       this.is_bot_running = !this.is_bot_running;
       if (!this.is_bot_running) {
         this.is_bot_paused = false;

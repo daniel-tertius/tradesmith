@@ -3,23 +3,21 @@
  * some of the heavy lifting to simplify code in index file and 
  * only keep api communication function in the interface files.
  */
-
 import { trader_type, trader_class, bot_status, saved_data } from "./helpers/types";
 import { print } from './helpers/functions'
-import BinanceTrader from './interfaces/binance.js';
-import LunoTrader from './interfaces/luno.js';
+import LunoTrader from './interfaces/luno';
 import config from './helpers/config';
-
-//@ts-ignore
-import { readFileSync, writeFileSync } from "fs";
 
 export default class Interface {
     trader: trader_class
 
-    constructor(interface_type: trader_type) {
+    constructor() {
+        const client = setClient(uri);
+        await client.connect();
+
         // For debugging...
-        const object = fetchSavedData();
-        print(`• Status: ${object.status}\n• Buys in a row: ${object.buying_levels}\n• Buy At: ${object.buy_at}\n• Sell At: ${object.sell_at}\n`);
+        // const object = fetchSavedData();
+        // print(`• Status: ${object.status}\n• Buys in a row: ${object.buying_levels}\n• Buy At: ${object.buy_at}\n• Sell At: ${object.sell_at}\n`);
 
         switch (interface_type) {
             case 'binance': this.trader = new BinanceTrader(); break;
@@ -27,6 +25,8 @@ export default class Interface {
             default: throw new Error(`Unknown Interface type ${interface_type}`);
         }
     }
+
+    end = async () => await client.close();
 
     status = {
         get: (): bot_status => {
@@ -157,13 +157,13 @@ export default class Interface {
 
     async setNextLimits() {
         const saved_data = fetchSavedData();
-        const sum = (s:number) => !!s ? Math.pow(buy_perc, -s) + sum(s - 1) : 1;
+        const sum = (s: number) => !!s ? Math.pow(buy_perc, -s) + sum(s - 1) : 1;
         const btc_price = +(await this.trader.getBTCPrice());
         saved_data.buying_levels++;
         const n = saved_data.buying_levels + 1;
         const buy_perc = 1 - +config.buy_percentage;
         const sell_perc = 1 + +config.sell_percentage;
-        
+
         saved_data.buy_at = btc_price * buy_perc;
         saved_data.sell_at = saved_data.buy_at * sell_perc * sum(n) / (n + 1);
 
@@ -171,9 +171,18 @@ export default class Interface {
     }
 }
 
-function fetchSavedData(): saved_data {
-    const file_name = "./helpers/.saved_data.json"
-    const raw_data = readFileSync(file_name, 'utf8');
+async function fetchSavedData(): saved_data {
+    const saved_data = getCollection('tradesmith_db', 'output');
+    const db_data = saved_data.find().limit(1).sort({ $natural: -1 });
+    
+    db_data.
+    let object = {
+        buy_at: db_data.buy_at,
+        sell_at: db_data.sell_at,
+        status: db_data.status,
+        buying_levels: db_data.buying_levels
+        save: () => saved_data.insertOne(object)
+    }
 
     // Remove unwanted characters from file.
     const data = raw_data.replace(/(\s|\/\*.*\*\/)/g, "");

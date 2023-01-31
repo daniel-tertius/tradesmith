@@ -1,6 +1,7 @@
+require('dotenv').config();
+
 import axios from 'axios';
 import { luno_ticker_type } from "../helpers/types";
-import config from '../helpers/config';
 
 export default class LunoTrader {
   zar_amount: number
@@ -32,7 +33,7 @@ export default class LunoTrader {
       headers: {
         "Accept": 'application/json',
         "Accept-Charset": 'utf-8',
-        "Authorization": `Basic ${btoa(config.api.luno.key + ':' + config.api.luno.secret)}`,
+        "Authorization": `Basic ${btoa(process.env.API_KEY + ':' + process.env.API_SECRET)}`,
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
       }
     }
@@ -103,41 +104,22 @@ const jsonToURLEncodedForm = (json = {}) =>
   Object.keys(json).map(key => `${key}=${json[key]}`).join('&');
 
 async function trade(type: 'ASK' | 'BID', btc_price: number, btc_amount: number) {
-  const url = "https://api.luno.com/api/1/postorder"
-
-  const token = `${config.api.luno.key}:${config.api.luno.secret}`;
-  const encodedToken = Buffer.from(token).toString('base64');
-
-  const options = {
-    headers: {
-      "Accept": "application/json",
-      "Accept-Charset": "utf-8",
-      // "Authorization": "Basic " + encodedToken,
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-    },
-    body: {
-      pair: "XBTZAR",
-      type,
-      volume: btc_amount,
-      price: btc_price
-    },
-    method: "POST"
-  }
-
-  const response = await axios.post(url, options, {
-    headers: {
-      "Accept": "application/json",
-      "Accept-Charset": "utf-8",
-      // "Authorization": "Basic " + encodedToken,
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-    },
+  const response = await axios({
+    method: "post",
+    url: "https://api.luno.com/api/1/postorder",
     auth: {
-      username: config.api.luno.key,
-      password: config.api.luno.secret
-    }
+      username: process.env.API_KEY as string,
+      password: process.env.API_SECRET as string
+    },
+    data: jsonToURLEncodedForm({
+      "pair": "XBTZAR",
+      "type": type,
+      "volume": btc_amount.toString(),
+      "price": btc_price.toString()
+    })
   });
-  const success = response.status.toString().startsWith("2");
 
+  const success = response.status.toString().startsWith("2");
   console.log(success ? "Success :)" : "Failed :(");
 
   return { success };
