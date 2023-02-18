@@ -37,102 +37,37 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.run = void 0;
-var config_1 = require("./helpers/config");
-var interface_1 = require("./interface");
-var functions_1 = require("./helpers/functions");
+var interface_1 = require("./classes/interface");
 var loop;
-var trader;
-// Initialise other variables
-var PRINT_PRICE = false;
-// @ts-ignore
-var PROCESS = process;
 function run() {
     return __awaiter(this, void 0, void 0, function () {
-        var error_1;
+        var should_reset, trader, minutes_timeout, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    // Define the class we will use to trade with.
-                    trader = new interface_1["default"](config_1["default"].trader_type);
-                    return [4 /*yield*/, trader.doDBThings()];
+                    should_reset = process.argv[2] === "reset";
+                    return [4 /*yield*/, new interface_1["default"]().start(should_reset)];
                 case 1:
-                    _a.sent();
-                    return [2 /*return*/];
+                    trader = _a.sent();
+                    _a.label = 2;
                 case 2:
-                    _a.trys.push([2, 4, , 6]);
-                    loop = setInterval(main, config_1["default"].minutes_interval_loop * 60 * 1000);
-                    return [4 /*yield*/, main()];
+                    _a.trys.push([2, 3, , 5]);
+                    minutes_timeout = trader.config.minutes_interval_loop * 60 * 1000;
+                    // Set the loop to do the trading after each interval.
+                    loop = setInterval(trader.execute, minutes_timeout);
+                    return [3 /*break*/, 5];
                 case 3:
-                    _a.sent();
-                    return [3 /*break*/, 6];
-                case 4:
                     error_1 = _a.sent();
-                    console.error("\u274C ".concat(error_1.stack || JSON.stringify(error_1, null, 2)));
+                    console.error(error_1.stack || typeof error_1 === "string" ? error_1 : JSON.stringify(error_1, function (key, value) { return (value + "").length > 200 ? value.slice(0, 200) + "..." : value; }, 2));
                     clearInterval(loop);
-                    return [4 /*yield*/, trader.end(ww)];
-                case 5:
+                    return [4 /*yield*/, trader.end()];
+                case 4:
                     _a.sent();
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
             }
         });
     });
 }
 exports.run = run;
 run();
-function main() {
-    return __awaiter(this, void 0, void 0, function () {
-        var bot_status, usd_to_btc_price, time, _a, next_step;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    bot_status = trader.status.get();
-                    return [4 /*yield*/, trader.trader.getBTCPrice()];
-                case 1:
-                    usd_to_btc_price = _b.sent();
-                    if (PRINT_PRICE) {
-                        time = new Date().toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
-                        PROCESS.stdout.write(new TextEncoder().encode("[".concat(time, "] BTC Price: ").concat(usd_to_btc_price, "\r")));
-                    }
-                    PRINT_PRICE = false;
-                    _a = bot_status;
-                    switch (_a) {
-                        case "open": return [3 /*break*/, 2];
-                        case "bought": return [3 /*break*/, 5];
-                        case "on_hold": return [3 /*break*/, 7];
-                    }
-                    return [3 /*break*/, 8];
-                case 2: // Can buy (happens at start, after a sell or after a freeze).
-                return [4 /*yield*/, trader.resetBot()];
-                case 3:
-                    _b.sent();
-                    return [4 /*yield*/, trader.trade.buy()];
-                case 4:
-                    _b.sent();
-                    return [3 /*break*/, 9];
-                case 5: return [4 /*yield*/, trader.getNextStep()];
-                case 6:
-                    next_step = _b.sent();
-                    switch (next_step) {
-                        case 'buy':
-                            trader.trade.buy();
-                            break;
-                        case 'sell':
-                            trader.trade.sell();
-                            break;
-                        case 'nothing':
-                            PRINT_PRICE = true;
-                            break;
-                        default: throw new Error("Unknown 'Next Step' found: ".concat(next_step, "."));
-                    }
-                    return [3 /*break*/, 9];
-                case 7:
-                    // TODO: This will be implemented in later versions.
-                    clearInterval(loop);
-                    return [3 /*break*/, 9];
-                case 8: throw new Error("Unknown 'Status' found: ".concat(bot_status, "."));
-                case 9: return [2 /*return*/];
-            }
-        });
-    });
-}

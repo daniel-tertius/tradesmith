@@ -33,10 +33,11 @@ export default class LunoTrader {
       headers: {
         "Accept": 'application/json',
         "Accept-Charset": 'utf-8',
-        "Authorization": `Basic ${btoa(process.env.API_KEY + ':' + process.env.API_SECRET)}`,
+        "Authorization": `Basic ${btoa(process.env.LUNO_API_KEY + ':' + process.env.LUNO_API_SECRET)}`,
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
       }
     }
+
     const response = await axios.get(url, options);
 
     const new_btc_amount = response.data.balance.find(balance => balance.asset === "XBT").balance
@@ -104,12 +105,12 @@ const jsonToURLEncodedForm = (json = {}) =>
   Object.keys(json).map(key => `${key}=${json[key]}`).join('&');
 
 async function trade(type: 'ASK' | 'BID', btc_price: number, btc_amount: number) {
-  const response = await axios({
+  const response = { status: 200 } /*await axios({
     method: "post",
     url: "https://api.luno.com/api/1/postorder",
     auth: {
-      username: process.env.API_KEY as string,
-      password: process.env.API_SECRET as string
+      username: process.env.LUNO_API_KEY as string,
+      password: process.env.LUNO_API_SECRET as string
     },
     data: jsonToURLEncodedForm({
       "pair": "XBTZAR",
@@ -117,7 +118,7 @@ async function trade(type: 'ASK' | 'BID', btc_price: number, btc_amount: number)
       "volume": btc_amount.toString(),
       "price": btc_price.toString()
     })
-  });
+  });*/
 
   const success = response.status.toString().startsWith("2");
   console.log(success ? "Success :)" : "Failed :(");

@@ -3,41 +3,67 @@
  * some of the heavy lifting to simplify code in index file and 
  * only keep api communication function in the interface files.
  */
-import { trader_type, trader_class, bot_status, saved_data } from "./helpers/types";
-import { print } from './helpers/functions'
-import LunoTrader from './interfaces/luno';
-import config from './helpers/config';
+import { bot_status, config_type } from "../helpers/types";
+import LunoTrader from './luno';
+import Config from '../classes/config';
 
 export default class Interface {
-    trader: trader_class
+    trader: LunoTrader;
+    config: config_type;
 
-    constructor() {
-        const client = setClient(uri);
-        await client.connect();
+    constructor() { }
 
-        // For debugging...
-        // const object = fetchSavedData();
-        // print(`• Status: ${object.status}\n• Buys in a row: ${object.buying_levels}\n• Buy At: ${object.buy_at}\n• Sell At: ${object.sell_at}\n`);
+    async start(restart: boolean = false) {
+        this.trader = new LunoTrader();
+        const config = new Config();
+        await config.connect();
+        this.config = await config.getConfig();
 
-        switch (interface_type) {
-            case 'binance': this.trader = new BinanceTrader(); break;
-            case 'luno': this.trader = new LunoTrader(); break;
-            default: throw new Error(`Unknown Interface type ${interface_type}`);
+        if (restart) {
+            this.status.set("open");
+        }
+        await this.execute();
+
+        return this;
+    }
+
+    execute = async () => {
+        const bot_status = this.status.get();
+        console.log(JSON.stringify(this.config, null, 2));
+
+        switch (bot_status) {
+            case "open": // Can buy (happens at start, after a sell or freeze).
+                await this.resetBot();
+                await this.trade.buy();
+                break;
+            case "bought": // Waiting for the correct buy or sell price.
+                const next_step = await this.getNextStep();
+                switch (next_step) {
+                    case 'buy': this.trade.buy(); break;
+                    case 'sell': this.trade.sell(); break;
+                    case 'nothing': break;
+                    default: throw new Error(`Unknown 'Next Step' found: ${next_step}.`);
+                }
+                break;
+            case "on_hold":
+                // TODO: This will be implemented in later versions.
+                throw `Wait for price to stabilize before trading..`;
+            default: throw new Error(`Unknown 'Status' found: ${bot_status}.`);
         }
     }
 
-    end = async () => await client.close();
+    end = async () => {
+        await this.config.disconnect();
+    }
 
     status = {
         get: (): bot_status => {
-            const object = fetchSavedData();
-            return object.status;
+            return this.config.status
         },
 
         set: (status: bot_status) => {
-            const object = fetchSavedData();
-            object.status = status;
-            object.save(true /* is_silent */);
+            this.config.status = status;
+            this.config.save();
         },
 
         /**
@@ -63,7 +89,6 @@ export default class Interface {
             const max_buys = this.info.maxBuyCount();
             if (no_of_buys_in_a_row >= max_buys) {
                 this.status.set("on_hold");
-                print(`Set to 'On Hold' due to buying ${no_of_buys_in_a_row} times in a row.`);
             } else {
                 const amount_to_buy = this.info.buyAmount();
 
@@ -83,34 +108,29 @@ export default class Interface {
 
     info = {
         sellAt: () => {
-            const saved_data = fetchSavedData();
-            return saved_data.sell_at;
+            return this.config.sell_at;
         },
 
         buyAt: () => {
-            const saved_data = fetchSavedData();
-            return saved_data.buy_at;
+            return this.config.buy_at;
         },
 
         buyCount: () => {
-            const saved_data = fetchSavedData();
-            return saved_data.buying_levels;
+            return this.config.buying_levels;
         },
 
         maxBuyCount: () => {
-            return config.max_buys
+            return this.config.max_buys
         },
 
         sellAmount: (): number => {
-            const saved_data = fetchSavedData();
-            return +config.btc_bid_amount * saved_data.buying_levels;
+            return +this.config.btc_bid_amount * this.config.buying_levels;
         },
 
         buyAmount: (): number => {
-            const buy_amount = +config.btc_bid_amount;
+            const buy_amount = +this.config.btc_bid_amount;
 
-            const saved_data = fetchSavedData();
-            if (saved_data.buying_levels === 0) {
+            if (this.config.buying_levels === 0) {
                 return +(buy_amount * 1.1).toFixed(6);
             }
 
@@ -138,62 +158,33 @@ export default class Interface {
 
         const btc_buy_value = this.info.buyAt();
         if (+btc_price <= btc_buy_value) {
-            return "buy"
+            return "buy";
         }
         return "nothing";
     }
 
     async resetBot() {
         const btc_price = await this.trader.getBTCPrice();
-        const saved_data = fetchSavedData();
 
-        saved_data.buying_levels = 0;
-        saved_data.status = "open";
-        saved_data.buy_at = +btc_price;
-        saved_data.sell_at = +btc_price;
+        this.config.buying_levels = 0;
+        this.config.status = "open";
+        this.config.buy_at = +btc_price;
+        this.config.sell_at = +btc_price;
 
-        saved_data.save();
+        this.config.save();
     }
 
     async setNextLimits() {
-        const saved_data = fetchSavedData();
         const sum = (s: number) => !!s ? Math.pow(buy_perc, -s) + sum(s - 1) : 1;
         const btc_price = +(await this.trader.getBTCPrice());
-        saved_data.buying_levels++;
-        const n = saved_data.buying_levels + 1;
-        const buy_perc = 1 - +config.buy_percentage;
-        const sell_perc = 1 + +config.sell_percentage;
+        this.config.buying_levels++;
+        const n = this.config.buying_levels + 1;
+        const buy_perc = 1 - +this.config.buy_percentage;
+        const sell_perc = 1 + +this.config.sell_percentage;
 
-        saved_data.buy_at = btc_price * buy_perc;
-        saved_data.sell_at = saved_data.buy_at * sell_perc * sum(n) / (n + 1);
+        this.config.buy_at = btc_price * buy_perc;
+        this.config.sell_at = this.config.buy_at * sell_perc * sum(n) / (n + 1);
 
-        saved_data.save();
+        this.config.save();
     }
-}
-
-async function fetchSavedData(): saved_data {
-    const saved_data = getCollection('tradesmith_db', 'output');
-    const db_data = saved_data.find().limit(1).sort({ $natural: -1 });
-    
-    db_data.
-    let object = {
-        buy_at: db_data.buy_at,
-        sell_at: db_data.sell_at,
-        status: db_data.status,
-        buying_levels: db_data.buying_levels
-        save: () => saved_data.insertOne(object)
-    }
-
-    // Remove unwanted characters from file.
-    const data = raw_data.replace(/(\s|\/\*.*\*\/)/g, "");
-    const object = JSON.parse(data);
-
-    object.save = function (is_silent: boolean = false) {
-        writeFileSync("./helpers/.saved_data.json", JSON.stringify(this, null, 2), 'utf8');
-        if (!is_silent) {
-            print(`• Status: ${object.status}\n• Buys in a row: ${object.buying_levels}\n• Buy At: ${object.buy_at}\n• Sell At: ${object.sell_at}\n`);
-        }
-    }
-
-    return object;
 }

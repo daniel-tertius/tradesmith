@@ -1,25 +1,40 @@
 require('dotenv').config();
 
 import { Collection, MongoClient } from 'mongodb';
+import { config_type } from '../helpers/types';
 
-class Config {
+export default class Config {
     client: MongoClient
     collection: Collection
 
     constructor() {
         const uri = process.env.MONGODB_URI;
         if (uri == null) throw new Error('MONGODB_URI is not defined');
-    
+
         this.client = new MongoClient(uri);
     }
 
-    async start() {
-        await this.client.connect();
-
+    async getConfig(): Promise<config_type> {
         const collection_name = process.env.MONGODB_CONFIG_COLLECTION_NAME;
         if (collection_name == null) throw new Error('MONGODB_COLLECTION_NAME is not defined');
 
         this.collection = this.getCollection(collection_name);
+        if (this.collection == null) throw new Error('MONGODB_CONFIG_COLLECTION_NAME is not defined');
+
+        let config: config_type = await this.findOne({}) as config_type;
+        if (config == null) throw Error("Could not fetch config.");
+
+        config.disconnect = async () => {
+            await this.disconnect();
+        }
+
+        config.save = async () => {
+            let { disconnect, save, ...bare_config } = config;
+            await this.updateOne(bare_config);
+        }
+
+
+        return config;
     }
 
     async connect() {
@@ -44,10 +59,19 @@ class Config {
     async insertOne(data: object) {
         return await this.collection.insertOne(data);
     }
+
     async insertMany(data: object[]) {
         return await this.collection.insertMany(data);
     }
-    async findOne(query: object): Promise<object | null>{
-        return await this.collection.findOne(query);
+
+    async findOne(query: object): Promise<unknown> {
+        const config = await this.collection.findOne(query) as unknown;
+        if (config == null) throw Error("Could not fetch config.");
+
+        return config;
+    }
+
+    async updateOne(config: object): Promise<void> {
+        await this.collection.updateOne({}, { $set: config }) as unknown;
     }
 }

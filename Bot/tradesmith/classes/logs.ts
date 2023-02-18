@@ -2,14 +2,14 @@ require('dotenv').config();
 
 import { Collection, MongoClient } from 'mongodb';
 
-class Log {
+export default class Log {
     client: MongoClient
     collection: Collection
 
     constructor() {
         const uri = process.env.MONGODB_URI;
         if (uri == null) throw new Error('MONGODB_URI is not defined');
-    
+
         this.client = new MongoClient(uri);
     }
 
