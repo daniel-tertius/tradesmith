@@ -1,5 +1,5 @@
-import { defineConfig } from '@vue/cli-service';
+import { defineConfig as _defineConfig } from '@vue/cli-service';
 
-module.exports = defineConfig({
+export default _defineConfig({
   transpileDependencies: true
-})
+});
