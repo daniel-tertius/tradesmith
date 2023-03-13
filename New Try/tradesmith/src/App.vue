@@ -1,8 +1,8 @@
 <template>
   <TradesmithHeading />
-  <main>
+  <main-container>
     <component @navigate="changeStep" v-bind:is="selected_component"></component>
-  </main>
+  </main-container>
 </template>
 
 <script>

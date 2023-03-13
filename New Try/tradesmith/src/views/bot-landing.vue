@@ -1,32 +1,30 @@
 <template>
-    <div class="container">
-        <div>
-            <div class="settings-row">
-                <span class="settings-label">Setting 1:</span>
-                <span class="settings-value">{{ setting1 }}</span>
-            </div>
-            <div class="settings-row">
-                <span class="settings-label">Setting 2:</span>
-                <span class="settings-value">{{ setting2 }}</span>
-            </div>
-            <div class="settings-row">
-                <span class="settings-label">Setting 3:</span>
-                <span class="settings-value">{{ setting3 }}</span>
-            </div>
+    <div>
+        <div class="settings-row">
+            <span class="settings-label">Setting 1:</span>
+            <span class="settings-value">{{ setting1 }}</span>
         </div>
-        <div class="settings-actions">
-            <button-group>
-                <main-button @click="editInfo">Edit Info</main-button>
-                <main-button @click="viewLogs">View Logs</main-button>
-            </button-group>
-            <button-group :mode="'row'">
-                <main-button @click="start">Start</main-button>
-                <main-button @click="continueButton">Continue</main-button>
-            </button-group>
-            <button-group>
-                <main-button @click="back">Back</main-button>
-            </button-group>
+        <div class="settings-row">
+            <span class="settings-label">Setting 2:</span>
+            <span class="settings-value">{{ setting2 }}</span>
         </div>
+        <div class="settings-row">
+            <span class="settings-label">Setting 3:</span>
+            <span class="settings-value">{{ setting3 }}</span>
+        </div>
+    </div>
+    <div class="settings-actions">
+        <button-group>
+            <main-button :index="0" @click="temp">View Logs</main-button>
+            <main-button :index="1" @click="temp">Edit Info</main-button>
+        </button-group>
+        <button-group mode="row">
+            <main-button :index="0" @click="temp">Start</main-button>
+            <main-button :index="1" @click="temp">Continue</main-button>
+        </button-group>
+        <button-group>
+            <main-button :index="0" @click="back">Back</main-button>
+        </button-group>
     </div>
 </template>
 
@@ -43,34 +41,15 @@ export default {
     methods: {
         back() {
             this.$emit('navigate', "Settings");
+        },
+        temp() {
+            alert("WIP")
         }
     }
 }
 </script>
   
 <style scoped>
-.container {
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #333333;
-
-    background-color: #777777;
-    border-radius: 10px;
-    padding: 1rem;
-    margin-top: 2rem;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 50vh;
-}
-
-.settings-info {
-    margin-bottom: 20px;
-}
-
 .settings-row {
     display: flex;
     flex-direction: row;

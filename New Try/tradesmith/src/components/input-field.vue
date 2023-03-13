@@ -78,21 +78,23 @@ export default {
     }
 }
 </script>
-  
+
 <style scoped>
 .form-group {
     display: flex;
     flex-direction: column;
-    /* margin-bottom: 1rem; */
+    margin-bottom: 1rem;
 }
 
 .input {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .label {
-    width: 20%;
+    font-weight: bold;
+    height: 1rem;
+    text-align: left;
 }
 
 input {
@@ -120,4 +122,3 @@ input:focus {
     margin-top: 0.25rem;
 }
 </style>
-  

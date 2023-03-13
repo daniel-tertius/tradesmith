@@ -1,22 +1,15 @@
 <template>
     <notification-banner :message="banner_message" :type="'success'" ref="banner" />
-    <div>
-        <div class="container">
-            <h2>Settings</h2>
-            <form class="settings-form">
-                <input-field labelText="Koopbedrag per Bitcoin-transaksie" inputType="whole_number" />
-                <input-field labelText="Age" inputType="number" />
-                <input-field labelText="Age" inputType="number" />
-                <input-field labelText="Age" inputType="number" />
-            </form>
+    <h2>Settings</h2>
+    <input-field labelText="Koopbedrag per Bitcoin-transaksie" inputType="whole_number" />
+    <input-field labelText="Age" inputType="number" />
+    <input-field labelText="Age" inputType="number" />
+    <input-field labelText="Age" inputType="number" />
 
-            <button-group mode="row">
-                <main-button @click="back">Back</main-button>
-                <main-button @click="saveData">Save</main-button>
-                <main-button @click="saveData">Save</main-button>
-            </button-group>
-        </div>
-    </div>
+    <button-group mode="row">
+        <main-button :index="0" @click="back">Back</main-button>
+        <main-button :index="1" @click="saveData">Save</main-button>
+    </button-group>
 </template>
   
 <script>
@@ -57,7 +50,6 @@ export default {
     background-color: #777777;
     border-radius: 10px;
     padding: 1rem;
-    margin-top: 2rem;
 
     display: flex;
     flex-direction: column;
@@ -65,10 +57,4 @@ export default {
     align-items: center;
     height: 50vh;
 }
-
-.settings-form {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
 </style>
