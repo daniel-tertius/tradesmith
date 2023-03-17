@@ -1,5 +1,5 @@
 <template>
-    <div :style="getStyle">
+    <div :style='getStyle'>
         <slot></slot>
     </div>
 </template>
@@ -15,17 +15,21 @@ export default {
     computed: {
         getStyle() {
             return {
-                "display": "flex",
-                "flex-direction": this.mode,
-                "justify-content": "center",
-                "align-items": "center",
-                "width": "100%",
-                "margin-inline": "1rem",
-                "margin-bottom": "0",
-                "margin-top": "0"
+                'flex-direction': this.mode,
+                'display': 'flex',
+                'justify-content': 'center',
+                'align-items': 'center',
+                'margin-top': '0',
+                'margin-right': '0',
+                'margin-bottom': '1rem',
+                'margin-left': '1rem',
+                'position': 'fixed',
+                'bottom': '0',
+                // 'left': '0',
+                'width': 'calc(100% - 1rem)',
+                'max-width': '40rem'
             }
         }
     }
 }
 </script>
-  

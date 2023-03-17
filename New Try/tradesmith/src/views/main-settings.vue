@@ -1,14 +1,14 @@
 <template>
-    <notification-banner :message="banner_message" :type="'success'" ref="banner" />
+    <notification-banner :message="banner_message" type="success" ref="banner" />
     <h2>Settings</h2>
-    <input-field labelText="Koopbedrag per Bitcoin-transaksie" inputType="whole_number" />
-    <input-field labelText="Age" inputType="number" />
-    <input-field labelText="Age" inputType="number" />
-    <input-field labelText="Age" inputType="number" />
+    <input-field text="Base Order Size" input_type="currency"
+        text_info="The Base Order is the first order the bot will create when starting a new deal." />
+    <input-field text="Target profit (%)" input_type="percentage"
+        text_info="Configure the percentage Take Profit target the bot will use to close successful trades, the bot will automatically account for exchange fees." />
 
     <button-group mode="row">
-        <main-button :index="0" @click="back">Back</main-button>
-        <main-button :index="1" @click="saveData">Save</main-button>
+        <main-button icon="arrow-left" index="0" @click="back">Back</main-button>
+        <main-button icon="save" :index="1" @click="saveData">Save</main-button>
     </button-group>
 </template>
   

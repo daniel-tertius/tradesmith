@@ -17,7 +17,7 @@
 
   margin: 1rem;
   padding: 1rem;
-  font-size: 4rem;
+  font-size: 2rem;
 
   width: calc(100% - 2rem);
   max-width: 40rem;
@@ -29,7 +29,7 @@
 
 @media screen and (max-width: 40rem) {
   .header {
-    font-size: 2rem;
+    font-size: 1rem;
     margin-bottom: 1rem;
     padding: 1rem;
   }
@@ -37,7 +37,7 @@
 
 @media screen and (max-width: 300px) {
   .header {
-    font-size: 1.5rem;
+    font-size: 0.75rem;
     margin-bottom: 0.5rem;
     padding: 0.5rem;
     letter-spacing: 0.05rem;

@@ -1,26 +1,36 @@
 <template>
-    <div class="container">
+    <div :class="containerClass">
         <slot></slot>
     </div>
 </template>
 
+<script>
+export default {
+    computed: {
+        containerClass() {
+            return "container";
+        }
+    }
+};
+</script>
+
 <style scoped>
 .container {
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #333333;
+    /* line-height: 1.5; */
+    /* color: #333333; */
 
-    height: auto;
-    min-height: 50vh;
-
-    background-color: #777777;
+    /* background-color: #777777; */
     border-radius: 10px;
+
+    width: 100%;
+    max-width: 40rem;
+    height: 90vh;
+
     padding: 1rem;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    /* padding: 1rem; */
+
+    /* justify-content: center; */
+    /* align-items: center; */
 }
 </style>

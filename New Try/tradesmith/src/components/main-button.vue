@@ -1,43 +1,40 @@
 <template>
-  <button :style="style">
-    <slot></slot>
+  <button>
+    <font-awesome-icon class="icon" v-if="leftIcon" :icon="leftIcon" />
+    <span>
+      <slot></slot>
+    </span>
+    <font-awesome-icon class="icon" v-if="rightIcon" :icon="rightIcon" />
   </button>
 </template>
 
 <script>
 export default {
   props: {
-    styleProps: {
-      type: Object,
-      default: () => ({}),
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
-  },
-  data() {
-    return {
-      button_group_mode: this.$parent.$props.mode
+    index: Number,
+    icon: String,
+    iconPosition: {
+      type: String,
+      default: 'left',
+      validator: (value) => ['left', 'right'].includes(value)
     }
   },
   computed: {
-    style() {
-      return {
-        "margin-left": this.$parent.mode === "row" ? this.index === 0 ? "0" : "0.5rem" : "0",
-        "margin-right": this.$parent.mode === "row" ? this.index === this.$parent.$slots.default().length - 1 ? "0" : "0.5rem" : "0",
-        "width": this.$parent.mode === "row" ? `${(100 / this.$parent.$slots.default().length).toFixed(2)}%` : "100%",
-      };
+    leftIcon() {
+      return this.iconPosition === 'left' ? this.icon : null;
     },
-  },
+    rightIcon() {
+      return this.iconPosition === 'right' ? this.icon : null;
+    }
+  }
 };
 </script>
 
-<style>
+<style scoped>
 button {
   font-family: 'Helvetica Neue', sans-serif;
-  font-size: 1.5rem;
-  padding: 1rem 2rem;
+  font-size: 1.6rem;
+  padding: 1rem 1rem;
   border: none;
   align-self: center;
   align-content: center;
@@ -46,25 +43,28 @@ button {
   color: #FFFFFF;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
-  margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  margin-right: 1rem;
+  width: 100%;
 }
 
 button:hover {
   background-color: #666666;
 }
 
-@media screen and (max-width: 700px) {
-  button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-  }
+.icon {
+  padding-inline: 1rem;
 }
 
-@media screen and (max-width: 280px) {
+span {
+  text-align: center;
+  width: 100%;
+}
+
+@media screen and (max-width: 300px) {
   button {
-    font-size: 0.5rem;
-    padding: 0.25rem 0.5rem;
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
   }
 }
 </style>

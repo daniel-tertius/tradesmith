@@ -1,8 +1,9 @@
 <template>
-  <h2>Welcome!</h2>
+  <!-- <h2>Welcome!</h2> -->
+  <img src="../assets/bitcoin_logo.png" height="120" />
   <button-group mode="row">
-    <main-button :index="0" @click="createNewBot">New</main-button>
-    <main-button :index="1" @click="loadBot">Load</main-button>
+    <main-button icon="seedling" :index="0" @click="createNewBot">New</main-button>
+    <main-button icon="history" :index="1" @click="loadBot">Load</main-button>
   </button-group>
 </template>
 
