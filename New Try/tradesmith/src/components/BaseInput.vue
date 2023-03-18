@@ -1,12 +1,12 @@
 <template>
-  <div class="description">
+  <div class="label-group">
     <label :for="inputId" class="label">{{ text }}:</label>
-    <div class="tooltip">
+    <div class="popup">
       <font-awesome-icon icon="question-circle" />
-      <span class="tooltiptext">{{ text_info }}</span>
+      <span class="popuptext">{{ text_info }}</span>
     </div>
   </div>
-  <div class="form-group">
+  <div class="input-group">
     <input :id="inputId" :type="input_type" v-model="input_value" :class="{ 'is-invalid': is_invalid }"
       @blur="validateInput" @keydown="handleKeyDown">
     <div v-if="is_invalid" class="invalid-feedback">{{ error_message }}</div>
@@ -15,6 +15,9 @@
   
 <script>
 export default {
+  emits: {
+    "setInvalid": Function
+  },
   props: {
     text: {
       type: String,
@@ -93,6 +96,7 @@ export default {
         default:
           break;
       }
+      this.$emit('setInvalid', this.is_invalid);
     },
     handleKeyDown(event) {
       if (this.input_type !== "percentage") return;
@@ -127,7 +131,7 @@ export default {
 </script>
 
 <style scoped>
-.form-group {
+.input-group {
   margin-bottom: 1rem;
   width: 100%;
 }
@@ -146,9 +150,8 @@ input {
   color: #FFFFFF;
   font-size: 1rem;
   transition: background-color 0.2s ease-in-out;
-  width: 100%;
+  width: calc(100% - 1rem);
   text-align: left;
-  align-content: left;
 }
 
 input:focus {
@@ -156,7 +159,7 @@ input:focus {
   background-color: #666666;
 }
 
-.description {
+.label-group {
   display: flex;
   align-content: left;
   width: 100%;
@@ -172,12 +175,12 @@ input:focus {
   margin-top: 0.25rem;
 }
 
-.tooltip {
+.popup {
   position: relative;
   display: inline-block;
 }
 
-.tooltip .tooltiptext {
+.popup .popuptext {
   visibility: hidden;
   width: 200px;
   background-color: #555;
@@ -194,7 +197,7 @@ input:focus {
   transition: opacity 0.3s;
 }
 
-.tooltip .tooltiptext::after {
+.popup .popuptext::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -205,7 +208,7 @@ input:focus {
   border-color: #555 transparent transparent transparent;
 }
 
-.tooltip:hover .tooltiptext {
+.popup:hover .popuptext {
   visibility: visible;
   opacity: 1;
 }

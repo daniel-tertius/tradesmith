@@ -1,47 +1,47 @@
 <template>
-  <h1 class="header">TradeSmith</h1>
+  <h1 class="header">{{ label }}</h1>
 </template>
+
+<script>
+export default {
+  props: {
+    label: String
+  }
+}
+</script>
 
 <style scoped>
 .header {
-  font-family: 'Helvetica Neue', sans-serif;
   color: #FFFFFF;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-align: center;
 
-  background-color: #444444;
+  background-color: #D63027;
   border: 5px solid #FFFFFF;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 
-  margin: 1rem;
+  margin: 0;
+  margin-bottom: 1rem;
   padding: 1rem;
-  font-size: 4rem;
-
-  width: calc(100% - 2rem);
-  max-width: 40rem;
-
-  position: fixed;
-  top: 0;
-
+  font-size: 2rem;
 }
 
-@media screen and (max-width: 40rem) {
+@media screen and (max-width: 33rem) {
   .header {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 1.2rem;
     padding: 1rem;
   }
 }
 
 @media screen and (max-width: 300px) {
   .header {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 1rem;
     padding: 0.5rem;
     letter-spacing: 0.05rem;
     border-width: 2px;
   }
 }
 </style>
+

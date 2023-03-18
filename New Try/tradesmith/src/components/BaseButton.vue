@@ -1,9 +1,7 @@
 <template>
   <button>
     <font-awesome-icon class="icon" v-if="leftIcon" :icon="leftIcon" />
-    <span>
-      <slot></slot>
-    </span>
+    <span>{{ label }}</span>
     <font-awesome-icon class="icon" v-if="rightIcon" :icon="rightIcon" />
   </button>
 </template>
@@ -11,6 +9,10 @@
 <script>
 export default {
   props: {
+    label: {
+      type: String,
+      required: true
+    },
     index: Number,
     icon: String,
     iconPosition: {
@@ -32,9 +34,7 @@ export default {
 
 <style scoped>
 button {
-  font-family: 'Helvetica Neue', sans-serif;
   font-size: 1.6rem;
-  padding: 1rem 1rem;
   border: none;
   align-self: center;
   align-content: center;
@@ -43,9 +43,11 @@ button {
   color: #FFFFFF;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
-  margin: 0;
   margin-right: 1rem;
+
   width: 100%;
+  margin: 0;
+  padding: 1rem;
 }
 
 button:hover {
@@ -61,10 +63,16 @@ span {
   width: 100%;
 }
 
-@media screen and (max-width: 300px) {
+@media screen and (max-width: 33rem) {
   button {
     font-size: 1.2rem;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  button {
+    padding: 0.5rem;
   }
 }
 </style>

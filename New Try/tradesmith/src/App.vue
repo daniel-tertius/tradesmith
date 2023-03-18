@@ -1,12 +1,11 @@
 <template>
-  <main-container>
-    <TradesmithHeading />
+  <base-container>
     <component @navigate="changeStep" v-bind:is="selected_component"></component>
-  </main-container>
+  </base-container>
 </template>
 
 <script>
-import TradesmithHeading from './components/tradesmith-heading.vue';
+import TradesmithHeading from './components/TradesmithHeading.vue';
 import Landing from './views/main-landing.vue';
 import Settings from './views/main-settings.vue';
 import BotLanding from './views/bot-landing.vue';
@@ -25,13 +24,14 @@ export default {
     changeStep(step) {
       this.selected_component = step;
     }
-  },
+  }
 }
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', sans-serif;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

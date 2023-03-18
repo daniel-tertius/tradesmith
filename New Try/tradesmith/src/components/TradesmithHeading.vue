@@ -1,10 +1,11 @@
 <template>
-  <h1 class="header">TradeSmith</h1>
+  <div>
+    <h1 class="header">TradeSmith</h1>
+  </div>
 </template>
 
 <style scoped>
 .header {
-  font-family: 'Helvetica Neue', sans-serif;
   color: #FFFFFF;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -15,30 +16,22 @@
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 
-  margin: 1rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
   padding: 1rem;
-  font-size: 2rem;
-
-  width: calc(100% - 2rem);
-  max-width: 40rem;
-
-  position: fixed;
-  top: 0;
-
+  font-size: 4rem;
 }
 
-@media screen and (max-width: 40rem) {
+@media screen and (max-width: 33rem) {
   .header {
-    font-size: 1rem;
-    margin-bottom: 1rem;
+    font-size: 2rem;
     padding: 1rem;
   }
 }
 
 @media screen and (max-width: 300px) {
   .header {
-    font-size: 0.75rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
     padding: 0.5rem;
     letter-spacing: 0.05rem;
     border-width: 2px;
