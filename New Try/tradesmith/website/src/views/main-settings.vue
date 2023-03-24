@@ -30,6 +30,7 @@
 </template>
   
 <script>
+import Config from "../../../database/config.ts";
 
 export default {
     emits: {
@@ -60,6 +61,11 @@ export default {
         back() {
             this.$emit('navigate', "Landing");
         },
+    },
+
+    created() {
+        const config = new Config();
+        config.
     }
 }
 </script>
