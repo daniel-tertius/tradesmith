@@ -42,7 +42,7 @@
 </template>
   
 <script>
-import Config from "../../../database/config.ts";
+import Config from "@/database/config.ts";
 
 export default {
   emits: {

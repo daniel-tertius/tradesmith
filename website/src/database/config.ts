@@ -1,11 +1,11 @@
 require('dotenv').config();
 
 import { Collection, MongoClient } from 'mongodb';
-import { config_type } from '../helpers/types';
+import { config_type } from '@/database/types';
 
 export default class Config {
     client: MongoClient
-    collection: Collection
+    collection!: Collection;
 
     constructor() {
         const uri = process.env.MONGODB_URI;
@@ -21,7 +21,7 @@ export default class Config {
         this.collection = this.getCollection(collection_name);
         if (this.collection == null) throw new Error('MONGODB_CONFIG_COLLECTION_NAME is not defined');
 
-        let config: config_type = await this.findOne({}) as config_type;
+        const config: config_type = await this.findOne({}) as config_type;
         if (config == null) throw Error("Could not fetch config.");
 
         config.disconnect = async () => {
@@ -29,7 +29,7 @@ export default class Config {
         }
 
         config.save = async () => {
-            let { disconnect, save, ...bare_config } = config;
+            const { disconnect, save, ...bare_config } = config;
             await this.updateOne(bare_config);
         }
 
@@ -40,8 +40,8 @@ export default class Config {
     async connect() {
         try {
             await this.client.connect();
-        } catch (err) {
-            throw new Error(`Could not connect to MongoDB: ${err.stack || err}`);
+        } catch (err: unknown) {
+            throw new Error(`Could not connect to MongoDB: ${err instanceof Error ? err.stack : JSON.stringify(err, null, 2)}`);
         }
     }
 

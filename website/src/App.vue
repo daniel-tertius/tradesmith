@@ -4,26 +4,25 @@
   </base-container>
 </template>
 
-<script>
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
+
 import TradesmithHeading from './components/TradesmithHeading.vue';
 import Landing from './views/main-landing.vue';
 import Settings from './views/main-settings.vue';
 import BotLanding from './views/bot-landing.vue';
 
-export default {
-  name: 'App',
+@Options({
   components: {
     TradesmithHeading, Landing, Settings, BotLanding
   },
-  data() {
-    return {
-      selected_component: "Landing"
-    }
-  },
-  methods: {
-    changeStep(step) {
-      this.selected_component = step;
-    }
+})
+
+export default class App extends Vue {
+  selected_component = "Landing";
+
+  changeStep(step: 'TradesmithHeading' | 'Landing' | 'Settings' | 'BotLanding') {
+    this.selected_component = step;
   }
 }
 </script>
@@ -31,11 +30,9 @@ export default {
 <style>
 #app {
   font-family: 'Helvetica Neue', sans-serif;
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-
   display: flex;
   flex-direction: column;
   justify-content: center;

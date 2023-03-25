@@ -4,7 +4,7 @@ import { Collection, MongoClient } from 'mongodb';
 
 export default class Log {
     client: MongoClient
-    collection: Collection
+    collection!: Collection;
 
     constructor() {
         const uri = process.env.MONGODB_URI;
@@ -26,7 +26,7 @@ export default class Log {
         try {
             await this.client.connect();
         } catch (err) {
-            throw new Error(`Could not connect to MongoDB: ${err.stack || err}`);
+            throw new Error(`Could not connect to MongoDB: ${err instanceof Error ? err.stack : JSON.stringify(err, null, 2)}`);
         }
     }
 

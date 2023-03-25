@@ -13,6 +13,8 @@ import {
     faList
 } from '@fortawesome/free-solid-svg-icons';
 
+import { App } from 'vue';
+
 library.add(faQuestionCircle);
 library.add(faSeedling);
 library.add(faCircleDot);
@@ -24,7 +26,7 @@ library.add(faRepeat);
 library.add(faEdit);
 library.add(faList);
 
-export function addIcons(app) {
+export default function addIcons(app: App<Element>) {
     app.component('font-awesome-icon', FontAwesomeIcon);
 
     return app;
