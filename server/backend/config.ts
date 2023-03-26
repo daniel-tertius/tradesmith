@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 import { Collection, MongoClient } from 'mongodb';
-import { config_type } from '@/database/types';
+import { config_type } from './types';
 
 export default class Config {
     client: MongoClient
