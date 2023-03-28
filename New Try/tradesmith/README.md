@@ -34,6 +34,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 #### Changed
 - Change some files' names to Vue.js naming convention.
+- BaseButton: Changed the slot into a prop: label.
 
 #### Improved
 - Overall Style on screen of all sizes.
