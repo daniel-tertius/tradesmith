@@ -2,12 +2,13 @@
   <div class="label-group">
     <label :for="inputId" class="label">{{ text }}:</label>
     <div class="popup">
-      <font-awesome-icon icon="question-circle" />
+      <font-awesome-icon class="icon" icon="question-circle" />
       <span class="popuptext">{{ text_info }}</span>
     </div>
   </div>
   <div class="input-group">
-    <input :id="inputId" :type="input_type" v-model="input_value" :class="{ 'is-invalid': is_invalid }" @blur="validateInput" @keydown="handleKeyDown">
+    <input :id="inputId" :type="input_type" v-model="input_value" :class="{ 'is-invalid': is_invalid }"
+      @blur="validateInput" @keydown="handleKeyDown">
     <div v-if="is_invalid" class="invalid-feedback">{{ error_message }}</div>
   </div>
 </template>
@@ -143,6 +144,7 @@ export default {
   font-weight: bold;
   height: 1rem;
   text-align: left;
+  padding: 0.2rem;
 }
 
 input {
@@ -155,6 +157,12 @@ input {
   transition: background-color 0.2s ease-in-out;
   width: calc(100% - 1rem);
   text-align: left;
+}
+
+
+.icon {
+  padding: 0.2rem;
+  height: 1rem;
 }
 
 input:focus {
