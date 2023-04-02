@@ -5,18 +5,39 @@
 
 - Starting Website: npm run serve
 ### [v0.0.5] 02-04-2023
-#### Changed
+#### Added
+- Added VS Code spell checker items.
+- Added readme to root repo directory.
+- Added `client` directory based on the `Try New` directory's content.
+- Offline API to connect website to the database.
+- Defined `Spinner` component.
+- Show `Spinner` component when querying for config data from database.
+- Short description on how to start the Development environment.
 
+#### Changed
+- Converted `vue-website` to TS (work in progress).
+- Changed file, component, and variable names to .vue conventions (work in progress).
+- Improved `BaseBanner` (work in progress).
+- Improved display of question mark icon on `BaseInput` (added alignment and padding).
+- Extended validation on currency and percentage inputs for `BaseInput`.
+- Changed heading color from red to blue.
+- Moved global components import to a separate file.
+
+#### Removed
+- Unnecessary items from `.gitignore`.
+- `Bot` directory.
+- `Try New` directory.
+- `Webwerf` directory.
 
 ### [v0.0.4] 18-03-2023
 #### Added
-- Changelog
-- All views: Subheadings
-- Main Settings View: Error Alert without proper styling.
-- Bot Landing View: Icons
+- Changelog.
+- Subheadings to all views.
+- `Main Settings` view: error alert without proper styling.
+- `Bot Landing` view: icons.
 
 #### Changed
-- Change some files' names to Vue.js naming convention.
+- Changed some file names to Vue.js naming conventions.
 
 #### Improved
-- Overall Style on screen of all sizes.
+- Improved overall style on screens of all sizes.

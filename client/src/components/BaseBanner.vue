@@ -36,13 +36,10 @@ export default defineComponent({
     methods: {
         show() {
             this.local_duration = this.$props.duration;
-            console.log("HERE", this.local_duration);
             if (!this.isVisible) {
-                console.log("HERE 1")
                 this.isVisible = true;
                 this.runTime();
             }
-            console.log(this.isVisible);
         },
 
         runTime() {
@@ -53,15 +50,11 @@ export default defineComponent({
         },
 
         hide() {
-            console.log("HERE hide")
             this.local_duration = 0;
             this.isVisible = false;
         }
     }
-})
-
-// export default class BaseBanner extends Vue {
-// }
+});
 </script>
   
 <style scoped>
