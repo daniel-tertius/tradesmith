@@ -4,6 +4,15 @@
 - Start API: npm run dev
 
 - Starting Website: npm run serve
+### [v0.0.6] 02-04-2023
+#### Added
+- `dist` directory to `.gitignore`.
+- Added Production handling for Middleware API.
+- Added Production files.
+
+#### Changed
+- Title of Website
+- `MainSettings`: Added a resolve even if the DB query fails.
 ### [v0.0.5] 02-04-2023
 #### Added
 - Added VS Code spell checker items.

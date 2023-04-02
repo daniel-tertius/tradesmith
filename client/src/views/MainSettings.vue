@@ -53,11 +53,10 @@ import PostService from "../PostService";
         }
         return input;
       });
-
-      this.isDoneLoading = true;
     } catch (error: unknown) {
       console.error("ERROR:", error instanceof Error ? error.message : error);
     }
+    this.isDoneLoading = true;
   },
 
   emits: {

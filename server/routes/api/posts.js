@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const router = express.Router();
@@ -13,7 +14,6 @@ router.get('/', async (req, res) => {
 });
 
 // Add Post.
-
 router.post('/', async (req, res) => {
     const posts = await loadPostsCollection();
     await posts.insertOne({
