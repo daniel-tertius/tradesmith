@@ -38,6 +38,7 @@
 
 #### Changed
 - Changed some file names to Vue.js naming conventions.
+- BaseButton: Changed the slot into a prop: label.
 
 #### Improved
 - Improved overall style on screens of all sizes.
