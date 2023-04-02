@@ -1,15 +1,21 @@
 <template>
-    <div :class="['notification', type]" v-show="visible" @click="hide">
-        <p>{{ message }}</p>
+    <div :class="['notification', $props.type]" v-show="isVisible" @click="hide">
+        <p>{{ $props.message }}</p>
     </div>
 </template>
   
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    __name: "BaseBanner",
+    created() {
+        this.local_duration = this.$props.duration;
+    },
     props: {
         message: {
             type: String,
-            required: true
+            default: ""
         },
         duration: {
             type: Number,
@@ -20,35 +26,42 @@ export default {
             default: "info"
         }
     },
+
     data() {
         return {
-            visible: false,
-            local_duration: this.duration
-        };
+            isVisible: false,
+            local_duration: 0,
+        }
     },
     methods: {
         show() {
-            if (this.visible) {
-                // Already visible show just reset timer.
-                this.local_duration = this.duration;
-            } else {
-                this.visible = true;
-                this.local_duration = this.duration;
+            this.local_duration = this.$props.duration;
+            console.log("HERE", this.local_duration);
+            if (!this.isVisible) {
+                console.log("HERE 1")
+                this.isVisible = true;
                 this.runTime();
             }
+            console.log(this.isVisible);
         },
+
         runTime() {
             setTimeout(() => {
                 this.local_duration -= 1000;
                 this[(this.local_duration > 0) ? 'runTime' : 'hide']();
             }, 1000);
         },
+
         hide() {
+            console.log("HERE hide")
             this.local_duration = 0;
-            this.visible = false;
+            this.isVisible = false;
         }
     }
-};
+})
+
+// export default class BaseBanner extends Vue {
+// }
 </script>
   
 <style scoped>

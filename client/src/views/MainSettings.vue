@@ -1,13 +1,13 @@
 <template>
   <teleport to="body">
-    <notification-banner :message="banner_message" type="success" ref="banner" />
+    <base-banner :message="bannerMessage" type="success" ref="banner" />
   </teleport>
   <teleport to="body">
-    <error-alert v-if="isInvalid">
+    <error-alert v-if="showAlert">
       <h2>Input is invalid!</h2>
       <p>Please enter correct input.</p>
       <base-button-group>
-        <base-button @click="isInvalid = false">Okay</base-button>
+        <base-button @click="showAlert = false">Okay</base-button>
       </base-button-group>
     </error-alert>
   </teleport>
@@ -16,11 +16,13 @@
     <tradesmith-heading />
     <tradesmith-sub-heading label="Settings" />
   </div>
+
+
   <div v-if="isDoneLoading">
-    <base-input @setInvalid="setInvalid" v-for="(input) in inputs" v-bind:text="input.text"
-      v-bind:text_info="input.textInfo" v-bind:input_type="input.inputType" v-bind:initValue="input.initValue"
-      v-bind:key="input.text" :v-model:initValue="input.initValue" />
+    <base-input @setInvalid="setInvalid" v-for="(input) in inputs" v-bind:text="input.text" v-bind:text_info="input.textInfo" v-bind:input_type="input.inputType"
+      v-bind:initValue="input.initValue" v-bind:key="input.text" :v-model:initValue="input.initValue" />
   </div>
+  <base-spinner v-if="!isDoneLoading" />
 
   <base-button-group mode="row">
     <base-button label="Back" icon="arrow-left" :index="0" @click="back" />
@@ -36,21 +38,23 @@ import PostService from "../PostService";
   name: "MainSettings",
   async created() {
     try {
+      type inputType = { text: string; textInfo: string; inputType: string; initValue: string; };
       const posts = await PostService.getPosts();
       const post = posts[0];
       const translate: Record<string, string> = {
         "Base Order Size": "zar_bid_amount",
         "Target profit (%)": "buy_percentage"
       }
-      this.inputs = this.inputs.map((input: { text: string; textInfo: string; inputType: string; initValue: string; }) => {
+
+      this.inputs = this.inputs.map((input: inputType) => {
         input.initValue = post[translate[input.text]];
-        return input
+        if (input.inputType === "percentage") {
+          input.initValue += "%";
+        }
+        return input;
       });
 
       this.isDoneLoading = true;
-
-      console.log("this.inputs", this.inputs)
-
     } catch (error: unknown) {
       console.error("ERROR:", error instanceof Error ? error.message : error);
     }
@@ -58,7 +62,7 @@ import PostService from "../PostService";
 
   emits: {
     navigate: Function,
-  },
+  }
 })
 
 export default class MainSettings extends Vue {
@@ -78,24 +82,27 @@ export default class MainSettings extends Vue {
   ];
 
   isDoneLoading = false;
-  banner_message = "";
-  banner_type = "";
   isInvalid = false;
+  showAlert = false;
+
+  bannerMessage = "";
+  banner_type = "";
 
   setInvalid(value: boolean) {
-    console.log("setting Invalid", !!value);
     this.isInvalid = !!value;
   }
   saveData() {
-    console.log(this.inputs.map((input) => input.initValue));
-    // if (this.isInvalid &&)
-    // this.showNotification();
-    // this.$emit("navigate", "BotLanding");
+    this.showAlert = this.isInvalid;
+    if (this.isInvalid) return;
+
+    this.showNotification();
+    this.$emit("navigate", "BotLanding");
   }
   showNotification() {
-    this.banner_message = "Hello, world!";
+    this.bannerMessage = "Hello, world!";
     this.banner_type = "info";
-    // this.$refs.banner.show();
+    //@ts-ignore
+    this.$refs['banner'].show();
   }
   back() {
     this.$emit("navigate", "Landing");

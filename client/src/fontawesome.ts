@@ -10,7 +10,8 @@ import {
     faRepeat,
     faFlagCheckered,
     faEdit,
-    faList
+    faList,
+    faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 
 import { App } from 'vue';
@@ -25,6 +26,7 @@ library.add(faFlagCheckered);
 library.add(faRepeat);
 library.add(faEdit);
 library.add(faList);
+library.add(faSpinner);
 
 export default function addIcons(app: App<Element>) {
     app.component('font-awesome-icon', FontAwesomeIcon);

@@ -7,9 +7,8 @@
     </div>
   </div>
   <div class="input-group">
-    <input :id="inputId" :type="input_type" v-model="input_value" :class="{ 'is-invalid': is_invalid }"
-      @blur="validateInput" @keydown="handleKeyDown">
-    <div v-if="is_invalid" class="invalid-feedback">{{ error_message }}</div>
+    <input :id="inputId" :type="input_type" v-model="inputValue" :class="{ 'is-invalid': isInvalid }" @blur="validateInput" @keydown="handleKeyDown">
+    <div v-if="isInvalid" class="invalid-feedback">{{ error_message }}</div>
   </div>
 </template>
   
@@ -40,13 +39,13 @@ export default {
   },
   data() {
     return {
-      input_value: (() => {
+      inputValue: (() => {
         switch (this.input_type) {
           case 'currency': return `R ${this.initValue}`;
           default: return this.initValue;
         }
       })(),
-      is_invalid: false,
+      isInvalid: false,
       error_message: ''
     }
   },
@@ -60,53 +59,89 @@ export default {
       return "R ";
     },
     validateInput() {
-      if (this.input_value == null) return;
-      if (typeof this.input_value === "string" && !this.input_value.trim().length) return;
+      let input_value, pattern;//: string | number;
+
+      if (this.inputValue == null) return;
+      if (typeof this.inputValue === "string" && !this.inputValue.trim().length) return;
 
       switch (this.input_type) {
         case 'email':
           const email_regex = /^\w[\.\w-]*@([\w-]+\.)+[\w-]{2,4}$/; //eslint-disable-line
-          if (!email_regex.test(this.input_value)) {
-            this.is_invalid = true;
+          if (!email_regex.test(this.inputValue)) {
+            this.isInvalid = true;
             this.error_message = 'Please enter a valid email address';
           }
           break;
         case "whole_number":
-          if (isNaN(this.input_value)) {
-            this.is_invalid = true;
-            this.error_message = 'Please enter a valid number';
+          if (isNaN(this.inputValue)) {
+            this.isInvalid = true;
+            this.error_message = 'Please enter a valid number.';
           }
 
-          if (this.input_value < 1) {
-            this.is_invalid = true;
+          if (this.inputValue < 1) {
+            this.isInvalid = true;
             this.error_message = 'Please enter a number greater than 0.';
           }
           break;
         case 'number':
-          if (isNaN(this.input_value)) {
-            this.is_invalid = true;
-            this.error_message = 'Please enter a valid number';
+          if (isNaN(this.inputValue)) {
+            this.isInvalid = true;
+            this.error_message = 'Please enter a valid number.';
           }
 
           break;
         case 'currency':
+          // eslint-disable-next-line
+          input_value = this.inputValue.substring(2).trim();
+          if (+input_value <= 0) {
+            this.isInvalid = true;
+            this.error_message = "Please enter a number greater than zero.";
+            break;
+          }
+
+          // eslint-disable-next-line
+          pattern = /^\d+(?:\.\d{1,2})?$/;
+          if (!pattern.test(input_value)) {
+            this.isInvalid = true;
+            this.error_message = "Please enter a number with up to two decimal places.";
+            break;
+          }
+
           break;
         case 'percentage':
-          if (!/^\d{1,3}(\.\d{1,2})?%/.test(this.input_value)) {
-            this.is_invalid = true;
-            this.error_message = "Please enter a valid percentage";
+          // eslint-disable-next-line
+          input_value = this.inputValue.substring(0, (this.inputValue.length - 1)).trim();
+          if (+input_value <= 0) {
+            this.isInvalid = true;
+            this.error_message = "Please enter a number greater than zero.";
+            break;
           }
+
+          if (+input_value > 100) {
+            this.isInvalid = true;
+            this.error_message = "Please enter a number smaller or equal to 100.";
+            break;
+          }
+
+          // eslint-disable-next-line
+          pattern = /^\d{1,3}(\.\d{1,2})?$/;
+          if (!pattern.test(input_value)) {
+            this.isInvalid = true;
+            this.error_message = "Please enter a valid percentage.";
+            break;
+          }
+
           break;
         default:
           break;
       }
-      this.$emit('setInvalid', this.is_invalid);
+      this.$emit('setInvalid', this.isInvalid);
     },
     handleKeyDown(event) {
       if (this.input_type !== "percentage") return;
       // Move the cursor to the prior position if it is on the last character
       if (
-        event.target.selectionEnd === this.input_value.length &&
+        event.target.selectionEnd === this.inputValue.length &&
         (event.key === 'ArrowLeft' || event.key === 'Backspace')
       ) {
         event.preventDefault();
@@ -115,18 +150,18 @@ export default {
     },
   },
   watch: {
-    input_value() {
-      this.is_invalid = false;
+    inputValue() {
+      this.isInvalid = false;
       this.error_message = '';
 
       switch (this.input_type) {
         case 'currency':
           // eslint-disable-next-line
-          this.input_value = `R ${this.input_value.replace(/[^0-9\.]/g, "").trim()}`;
+          this.inputValue = `R ${this.inputValue.replace(/[^0-9\.]/g, "").trim()}`;
           break;
         case 'percentage':
           // eslint-disable-next-line
-          this.input_value = `${this.input_value.replace(/[^0-9\.]/g, "").trim()}%`;
+          this.inputValue = `${this.inputValue.replace(/[^0-9\.]/g, "").trim()}%`;
           break;
       }
     }

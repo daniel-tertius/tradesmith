@@ -18,9 +18,9 @@
             <base-button label="Continue" icon="repeat" :index="1" @click="temp" />
         </base-button-group>
     </div>
-    <button-group>
+    <base-button-group>
         <base-button label="Back" icon="arrow-left" :index="0" @click="back" />
-    </button-group>
+    </base-button-group>
 </template>
 
 <script>
