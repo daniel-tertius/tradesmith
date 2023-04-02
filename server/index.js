@@ -1,14 +1,14 @@
-import express, { static as _static } from 'express';
-import { json } from 'body-parser';
-import cors from 'cors';
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
 
 // Middleware
-app.use(json());
+app.use(bodyParser.json());
 app.use(cors());
 
-import posts from './routes/api/posts';
+const posts = require('./routes/api/posts');
 app.use('/api/posts', posts);
 
 // Handle production.
