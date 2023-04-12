@@ -1,31 +1,37 @@
 <template>
   <div class="label-group">
-    <label :for="inputId" class="label">{{ text }}:</label>
+    <!-- Title of the input -->
+    <label :for="inputId">{{ text }}:</label>
+
+    <!-- Question mark and additional text -->
     <div class="popup">
       <font-awesome-icon class="icon" icon="question-circle" />
-      <span class="popuptext">{{ text_info }}</span>
+      <span class="popup-text">{{ text_info }}</span>
     </div>
   </div>
+
   <div class="input-group">
-    <input :id="inputId" :type="input_type" v-model="inputValue" :class="{ 'is-invalid': isInvalid }" @blur="validateInput" @keydown="handleKeyDown">
+    <!-- Input area -->
+    <input :id="inputId" :type="inputType" v-model="inputValue" :class="{ 'is-invalid': isInvalid }" @blur="validateInput" @keydown="handleKeyDown">
+    <!-- Invalid text -->
     <div v-if="isInvalid" class="invalid-feedback">{{ error_message }}</div>
   </div>
 </template>
   
-<script>
-export default {
-  emits: {
-    "setInvalid": Function
-  },
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  emits: ["setInvalid", "inputValue"],
   props: {
     text: {
       type: String,
       required: true
     },
-    input_type: {
+    inputType: {
       type: String,
       required: true,
-      validator: (value) => ['text', 'email', 'number', 'whole_number', 'currency', 'percentage'].includes(value)
+      validator: (value: string) => ['string', 'email', 'number', 'whole_number', 'currency', 'percentage'].includes(value)
     },
     text_info: {
       type: String,
@@ -39,32 +45,24 @@ export default {
   },
   data() {
     return {
-      inputValue: (() => {
-        switch (this.input_type) {
-          case 'currency': return `R ${this.initValue}`;
-          default: return this.initValue;
-        }
-      })(),
+      inputValue: this.initValue,
       isInvalid: false,
       error_message: ''
     }
   },
   computed: {
     inputId() {
-      return `input-${Math.random().toString(36).substr(2, 9)}`;
+      return `input-${Math.random().toString(36).substring(2, 9)}`;
     }
   },
   methods: {
-    getInitValue() {
-      return "R ";
-    },
     validateInput() {
       let input_value, pattern;//: string | number;
 
       if (this.inputValue == null) return;
       if (typeof this.inputValue === "string" && !this.inputValue.trim().length) return;
 
-      switch (this.input_type) {
+      switch (this.inputType) {
         case 'email':
           const email_regex = /^\w[\.\w-]*@([\w-]+\.)+[\w-]{2,4}$/; //eslint-disable-line
           if (!email_regex.test(this.inputValue)) {
@@ -73,18 +71,18 @@ export default {
           }
           break;
         case "whole_number":
-          if (isNaN(this.inputValue)) {
+          if (isNaN(+this.inputValue)) {
             this.isInvalid = true;
             this.error_message = 'Please enter a valid number.';
           }
 
-          if (this.inputValue < 1) {
+          if (+this.inputValue < 1) {
             this.isInvalid = true;
             this.error_message = 'Please enter a number greater than 0.';
           }
           break;
         case 'number':
-          if (isNaN(this.inputValue)) {
+          if (isNaN(+this.inputValue)) {
             this.isInvalid = true;
             this.error_message = 'Please enter a valid number.';
           }
@@ -135,10 +133,10 @@ export default {
         default:
           break;
       }
-      this.$emit('setInvalid', this.isInvalid);
+      this.$emit('setInvalid', `${!!this.isInvalid}`);
     },
-    handleKeyDown(event) {
-      if (this.input_type !== "percentage") return;
+    handleKeyDown(event: any) {
+      if (this.inputType !== "percentage") return;
       // Move the cursor to the prior position if it is on the last character
       if (
         event.target.selectionEnd === this.inputValue.length &&
@@ -147,6 +145,8 @@ export default {
         event.preventDefault();
         event.target.selectionEnd--;
       }
+
+      this.$emit('inputValue', this.inputValue);
     },
   },
   watch: {
@@ -154,7 +154,7 @@ export default {
       this.isInvalid = false;
       this.error_message = '';
 
-      switch (this.input_type) {
+      switch (this.inputType) {
         case 'currency':
           // eslint-disable-next-line
           this.inputValue = `R ${this.inputValue.replace(/[^0-9\.]/g, "").trim()}`;
@@ -166,7 +166,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style scoped>
@@ -175,7 +175,8 @@ export default {
   width: 100%;
 }
 
-.label {
+label {
+  font-size: 1rem;
   font-weight: bold;
   height: 1rem;
   text-align: left;
@@ -194,7 +195,6 @@ input {
   text-align: left;
 }
 
-
 .icon {
   padding: 0.2rem;
   height: 1rem;
@@ -212,12 +212,12 @@ input:focus {
 }
 
 .is-invalid {
-  border: 2px solid red;
+  border: 2px solid #8B0000;
 }
 
 .invalid-feedback {
-  color: red;
-  font-size: 0.8rem;
+  color: #8B0000;
+  font-size: 0.9rem;
   margin-top: 0.25rem;
 }
 
@@ -226,7 +226,7 @@ input:focus {
   display: inline-block;
 }
 
-.popup .popuptext {
+.popup .popup-text {
   visibility: hidden;
   width: 200px;
   background-color: #555;
@@ -243,7 +243,7 @@ input:focus {
   transition: opacity 0.3s;
 }
 
-.popup .popuptext::after {
+.popup .popup-text::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -254,8 +254,22 @@ input:focus {
   border-color: #555 transparent transparent transparent;
 }
 
-.popup:hover .popuptext {
+.popup:hover .popup-text {
   visibility: visible;
   opacity: 1;
+}
+
+@media screen and (max-width: 33rem) {
+  .invalid-feedback {
+    font-size: 0.7rem;
+  }
+
+  .icon {
+    height: 0.8rem;
+  }
+
+  label {
+    font-size: 0.8rem;
+  }
 }
 </style>

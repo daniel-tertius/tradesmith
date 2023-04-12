@@ -3,7 +3,7 @@ import ButtonGroup from '@/components/BaseButtonGroup.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Banner from '@/components/BaseBanner.vue';
 import Container from '@/components/BaseContainer.vue';
-import InfoField from '@/components/info-field.vue';
+import InfoField from '@/components/InfoField.vue';
 import ErrorAlert from '@/components/ErrorAlert.vue';
 import SubHeading from '@/components/TradesmithSubHeading.vue';
 import Heading from '@/components/TradesmithHeading.vue';

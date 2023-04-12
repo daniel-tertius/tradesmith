@@ -29,8 +29,8 @@ router.post('/', async (req, res) => {
     });
     res.status(201).send();
 })
-// Delete Post.
 
+// Delete Post.
 router.delete('/:id', async (req, res) => {
     const posts = await loadPostsCollection();
     const id = new ObjectId(req.params.id);
@@ -39,7 +39,6 @@ router.delete('/:id', async (req, res) => {
 
     res.status(200).send();
 })
-
 
 async function loadPostsCollection() {
     const uri = process.env.MONGODB_URI;

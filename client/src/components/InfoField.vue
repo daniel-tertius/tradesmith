@@ -5,8 +5,10 @@
     </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
     props: {
         label: {
             type: String,
@@ -17,10 +19,10 @@ export default {
             required: true,
         }
     }
-}
+});
 </script>
 
-<style>
+<style scoped>
 .value {
     font-style: italic;
     text-align: right;

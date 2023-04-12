@@ -1,17 +1,19 @@
 <template>
-  <h1 class="header">{{ label }}</h1>
+  <h1>{{ label }}</h1>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   props: {
     label: String
   }
-}
+});
 </script>
 
 <style scoped>
-.header {
+h1 {
   color: #FFFFFF;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -29,14 +31,14 @@ export default {
 }
 
 @media screen and (max-width: 33rem) {
-  .header {
+  h1 {
     font-size: 1.2rem;
     padding: 1rem;
   }
 }
 
 @media screen and (max-width: 300px) {
-  .header {
+  h1 {
     font-size: 1rem;
     padding: 0.5rem;
     letter-spacing: 0.05rem;

@@ -1,6 +1,6 @@
 <template>
   <base-container>
-    <component @navigate="changeStep" v-bind:is="selected_component"></component>
+    <component @navigate="changeStep" v-bind:is="selected_component" />
   </base-container>
 </template>
 
@@ -8,9 +8,9 @@
 import { Options, Vue } from 'vue-class-component';
 
 import TradesmithHeading from './components/TradesmithHeading.vue';
-import Landing from './views/main-landing.vue';
+import Landing from './views/MainLanding.vue';
 import Settings from './views/MainSettings.vue';
-import BotLanding from './views/bot-landing.vue';
+import BotLanding from './views/BotLanding.vue';
 
 @Options({
   components: {

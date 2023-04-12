@@ -5,20 +5,19 @@
     <font-awesome-icon class="icon" v-if="rightIcon" :icon="rightIcon" />
   </button>
 </template>
+  
+<script lang="ts">
+import { defineComponent } from 'vue'
 
-<script>
-export default {
+export default defineComponent({
   props: {
-    label: {
-      type: String,
-      required: true
-    },
+    label: { type: String, required: true },
     index: Number,
     icon: String,
     iconPosition: {
       type: String,
       default: 'left',
-      validator: (value) => ['left', 'right'].includes(value)
+      validator: (value: string) => ['left', 'right'].includes(value)
     }
   },
   computed: {
@@ -29,7 +28,7 @@ export default {
       return this.iconPosition === 'right' ? this.icon : null;
     }
   }
-};
+})
 </script>
 
 <style scoped>
@@ -47,7 +46,7 @@ button {
 
   width: 100%;
   margin: 0;
-  padding: 1rem;
+  padding: 1.25rem 1rem;
 }
 
 button:hover {
