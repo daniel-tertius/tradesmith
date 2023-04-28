@@ -1,21 +1,5 @@
 <template>
-  <div class="label-group">
-    <!-- Title of the input -->
-    <label :for="inputId">{{ text }}:</label>
-
-    <!-- Question mark and additional text -->
-    <div class="popup">
-      <font-awesome-icon class="icon" icon="question-circle" />
-      <span class="popup-text">{{ text_info }}</span>
-    </div>
-  </div>
-
-  <div class="input-group">
-    <!-- Input area -->
-    <input :id="inputId" :type="inputType" v-model="inputValue" :class="{ 'is-invalid': isInvalid }" @blur="validateInput" @keydown="handleKeyDown">
-    <!-- Invalid text -->
-    <div v-if="isInvalid" class="invalid-feedback">{{ error_message }}</div>
-  </div>
+  <component @navigate="changeStep" v-bind:is="selected_component" />
 </template>
   
 <script lang="ts">
@@ -64,7 +48,7 @@ export default defineComponent({
 
       switch (this.inputType) {
         case 'email':
-          const email_regex = /^\w[\.\w-]*@([\w-]+\.)+[\w-]{2,4}$/; //eslint-disable-line
+          const email_regex = /^\w[\.\w-]*@([\w-]+\.)+[\w-]{2,4}$/; // eslint-disable-line
           if (!email_regex.test(this.inputValue)) {
             this.isInvalid = true;
             this.error_message = 'Please enter a valid email address';

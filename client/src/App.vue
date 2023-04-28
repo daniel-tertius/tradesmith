@@ -1,31 +1,8 @@
 <template>
   <base-container>
-    <component @navigate="changeStep" v-bind:is="selected_component" />
+    <router-view></router-view>
   </base-container>
 </template>
-
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-
-import TradesmithHeading from './components/TradesmithHeading.vue';
-import Landing from './views/MainLanding.vue';
-import Settings from './views/MainSettings.vue';
-import BotLanding from './views/BotLanding.vue';
-
-@Options({
-  components: {
-    TradesmithHeading, Landing, Settings, BotLanding
-  },
-})
-
-export default class App extends Vue {
-  selected_component = "Landing";
-
-  changeStep(step: 'TradesmithHeading' | 'Landing' | 'Settings' | 'BotLanding') {
-    this.selected_component = step;
-  }
-}
-</script>
 
 <style>
 #app {

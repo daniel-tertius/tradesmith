@@ -1,12 +1,4 @@
 <template>
-  <teleport to="body">
-    <error-alert v-if="showAlert" title="Work In Progress" message="The Load functionality is not yet implemented.">
-      <base-button-group>
-        <base-button label="Close" icon="times" :index="0" @click="showAlert = false" />
-      </base-button-group>
-    </error-alert>
-  </teleport>
-
   <div>
     <tradesmith-heading />
     <tradesmith-sub-heading label="Welcome!" />
@@ -14,7 +6,7 @@
 
   <div>
     <img style="width: 100%; max-width: 20rem; min-width: 10rem" src="../assets/bitcoin_logo.png" />
-    <div>Version: 0.0.6 - 2 April 2023</div>
+    <div>Version: 0.0.7 - 23 April 2023</div>
   </div>
 
   <base-button-group mode="row">
@@ -28,22 +20,13 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: "MainLanding",
-  emits: ['navigate'],
-
   methods: {
     createNewBot(): void {
-      this.$emit("navigate", "Settings");
+      this.$router.push({ path: "settings/new" });
     },
 
     loadBot(): void {
-      // TODO: Implement logic for loading existing bots
-      this.showAlert = true;
-    }
-  },
-
-  data() {
-    return {
-      showAlert: false
+      this.$router.push({ name: 'BotLanding' })
     }
   }
 });

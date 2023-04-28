@@ -1,38 +1,43 @@
 # TRADESMITH
-## To Do
-1. Get an https URL.
-With Namecheap we can get the URL name "https://tradesmith-trader.com" with a fee of $10 per year.
-- https://www.namecheap.com/domains/registration/results/?domain=tradesmith-trader
-- Johan het gesê dat ek dit verniet deur die terminal kan doen. Ek gaan daarin kyk.
-  
-2. Get environment variables on AWS
-- Select an object in a S3 bucket and select "edit metadata".
-- Die Luno besonderhede en Env Vars gaan ek encode vir 'n ekstra sekuriteit. Ek dink die key waarmee ek gaan encrypt gaan ek op 'n derde verniet sagteware stoor 'HashiCorp'.
-- Die HishiCorp gaan ek maar deur AWS se KMS moet vat. Dit kos so R 90 'n jaar as ek net HashiCorp se API besonderhede daar stoor. Vir nou, gaan ek dit as nog 'n environment variable stoor.
-  
+## Project description
+A brief description of what the project does and why it is useful
+- - - -
+- TODO
 
-3. Figure uit hoe om die api en die website te run.
+## Installation instructions
+How to install and set up the project on different operating systems and platforms.
+- - - -
+It's a website, so no installation is needed. Just head over to the [URL](https://tradesmith-trader.s3.eu-west-2.amazonaws.com/)
 
-## Starting Development
-- Start API: npm run dev
-- Starting Website: npm run serve
-  
-## Installing HashiCorp on your system:
-To install HashiCorp on Ubuntu, you can follow these steps:
+## Usage instructions
+How to use the project and any required inputs and outputs.
+- - - -
+- TODO
 
-Add the HashiCorp GPG key:
-```curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -```
+## Dependencies
+Any external dependencies required to use your project, including versions.
+- - - -
+-  TODO
 
-Add the HashiCorp repository:
-```sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"```
+## License
+The license under which the project is released and usage restrictions.
+- - - -
+- TODO
 
-Update the package list:
-```sudo apt-get update```
+## Frequently Asked Questions (FAQs)
+Commonly asked questions and answers to help users troubleshoot issues.
+- - - -
+None at the time of writing this.
 
-Install the HashiCorp product:
-```sudo apt-get install vault```
+## Contact information
+For any feedback regarding the app
+- - - -
+Please send an email to tertius.vanniekerk@protonmail.com
+Please include `tradsmith feedback on version <version no.>` in the status.
 
 ## Changelog
+Changes and updates to the project
+- - - -
 ### [v0.0.6] 02-04-2023
 #### Added
 - `dist` directory to `.gitignore`.
@@ -80,3 +85,45 @@ Install the HashiCorp product:
 
 #### Improved
 - Improved overall style on screens of all sizes.
+
+## Code examples
+how to use your code, such as snippets or scripts, to help users get started quickly.
+- - - -
+TODO
+
+## To Do
+As an incomplete project, there are several things to do still.
+- - - -
+1. Get an https URL.
+With Namecheap we can get the URL name "https://tradesmith-trader.com" with a fee of $10 per year.
+- https://www.namecheap.com/domains/registration/results/?domain=tradesmith-trader
+- Johan het gesê dat ek dit verniet deur die terminal kan doen. Ek gaan daarin kyk.
+  
+2. Get environment variables on AWS
+- Select an object in a S3 bucket and select "edit metadata".
+- Die Luno besonderhede en Env Vars gaan ek encode vir 'n ekstra sekuriteit. Ek dink die key waarmee ek gaan encrypt gaan ek op 'n derde verniet sagteware stoor 'HashiCorp'.
+- Die HishiCorp gaan ek maar deur AWS se KMS moet vat. Dit kos so R 90 'n jaar as ek net HashiCorp se API besonderhede daar stoor. Vir nou, gaan ek dit as nog 'n environment variable stoor.
+  
+
+3. Figure uit hoe om die api en die website te run.
+
+## Starting Development
+- Start API: npm run dev
+- Starting Website: npm run serve
+  
+## Installing HashiCorp on your system:
+To install HashiCorp on Ubuntu, you can follow these steps:
+
+Add the HashiCorp GPG key:
+```curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -```
+
+Add the HashiCorp repository:
+```sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"```
+
+Update the package list:
+```sudo apt-get update```
+
+Install the HashiCorp product:
+```sudo apt-get install vault```
+
+## Changelog

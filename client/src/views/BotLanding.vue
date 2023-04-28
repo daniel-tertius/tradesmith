@@ -18,7 +18,7 @@
 
         <base-button-group>
             <base-button label="View Logs" icon="list" :index="0" @click="showAlert = true" />
-            <base-button label="Edit Info" icon="edit" :index="1" @click="showAlert = true" />
+            <base-button label="Edit Settings" icon="edit" :index="1" @click="editSettings" />
         </base-button-group>
         <base-button-group mode="row">
             <base-button label="Start" icon="flag-checkered" :index="0" @click="showAlert = true" />
@@ -26,7 +26,7 @@
         </base-button-group>
     </div>
     <base-button-group>
-        <base-button label="Back" icon="arrow-left" :index="0" @click="back" />
+        <base-button label="Back" icon="arrow-left" :index="0" @click="$router.go(-1)" />
     </base-button-group>
 </template>
 
@@ -48,8 +48,8 @@ export default defineComponent({
         }
     },
     methods: {
-        back(): void {
-            this.$emit('navigate', "Landing");
+        editSettings() {
+            this.$router.push({ path: "settings/load" });
         }
     }
 });
