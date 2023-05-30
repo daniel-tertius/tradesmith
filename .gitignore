@@ -6,7 +6,6 @@ node_modules
 Bot/tradesmith/Output/*
 Bot/tradesmith/*.js
 
-*/package.json
 */package-lock.json
 
 
