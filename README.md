@@ -38,6 +38,10 @@ Please include `tradsmith feedback on version <version no.>` in the status.
 ## Changelog
 Changes and updates to the project
 - - - -
+### [v0.0.7] 2023-05-30
+#### Added
+- Data Fetcher
+
 ### [v0.0.6] 02-04-2023
 #### Added
 - `dist` directory to `.gitignore`.
