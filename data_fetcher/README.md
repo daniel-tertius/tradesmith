@@ -23,7 +23,7 @@ Update the PM2 configuration in `ecosystem.config.js` to customize the behaviour
 To start the Data Fetcher process, run the following command:
 
 ```
-pm2 start pm2.config.js --env production
+NODE_ENV="production" pm2 start ecosystem.config.js
 ```
 
 The process will now run continuously according to the specified cron schedule, fetching data from the external API and inserting it into the configured MongoDB database.
