@@ -38,6 +38,13 @@ Please include `tradsmith feedback on version <version no.>` in the status.
 ## Changelog
 Changes and updates to the project
 - - - -
+### [v0.0.8] 2023-06-17
+#### Removed
+- serverless npm package files
+- obsidian files
+- vscode settings files
+- package-lock files
+
 ### [v0.0.7] 2023-05-30
 #### Added
 - Data Fetcher
