@@ -4,6 +4,10 @@ A brief description of what the project does and why it is useful
 - - - -
 - TODO
 
+To Setup the server:
+Make sure you have PM2 globally installed: `npm install pm2@latest -g`.
+Make sure you have dotenv globally installed: `npm install dotenv -g`.
+
 ## Installation instructions
 How to install and set up the project on different operating systems and platforms.
 - - - -
@@ -39,11 +43,21 @@ Please include `tradsmith feedback on version <version no.>` in the status.
 Changes and updates to the project
 - - - -
 ### [v0.0.8] 2023-06-17
+#### Added
+- API is now managed by PM2 🚀
+- `/server` directory to contain the `/api` and the `/data_fetcher`, both run by PM2.
+
+#### Changed
+- Data Fetcher has been upgraded to TypeScript for better development experience 💪
+- API has been migrated to TypeScript for improved code maintainability 🌟
+- API now provides dynamic access to all database collections 🗃️
+- Revamped API README for better understanding and usage guidance 📚
+
 #### Removed
-- serverless npm package files
-- obsidian files
-- vscode settings files
-- package-lock files
+- Removed unnecessary `.serverless` npm package files 🗑️
+- Bid farewell to obsolete `.obsidian` files 📝
+- Tossed out redundant `.vscode` settings files ⚙️
+- Say goodbye to `package-lock.json` files, no longer needed 📦🔒
 
 ### [v0.0.7] 2023-05-30
 #### Added
