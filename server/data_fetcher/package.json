@@ -3,14 +3,15 @@
     "version": "1.0.0",
     "description": "Getting BTC/ZAR Prices",
     "main": "dist/index.js",
-    "scripts": {
-        "build": "npx tsc",
-        "start": "node dist/index.js"
-    },
     "author": "Tertius van Niekerk",
     "license": "MIT",
     "dependencies": {
-        "mongodb": "^5.1.0",
-        "dotenv": "^16.3.0"
+        "dotenv": "^16.3.0",
+        "mongodb": "^5.6.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.3.1",
+        "@types/node-fetch": "^2.6.4",
+        "typescript": "^5.1.3"
     }
 }
