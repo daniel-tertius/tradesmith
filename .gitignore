@@ -1,11 +1,6 @@
-Bot/tradesmith/Output/*
-.DS_Store
 node_modules
-*/dist
+package-lock.json
+dist/
 .env
 Bot/tradesmith/Output/*
 Bot/tradesmith/*.js
-
-*/package-lock.json
-
-
