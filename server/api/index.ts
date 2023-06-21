@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors'; // Prevent CORS errors
 import getRouter from "./mongoDB";
 import dotenv from 'dotenv';
-dotenv.config({ path: '../../.env'});
+dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;

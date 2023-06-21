@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
-dotenv.config({ path: '../../.env'});
+dotenv.config();
 
 async function fetchData(): Promise<string> {
     const luno_url = process.env.LUNO_GET_PRICE_URL

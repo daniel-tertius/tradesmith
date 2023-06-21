@@ -1,7 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 import express from 'express';
-// import dotenv from 'dotenv';
-// dotenv.config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default async function getRouter() {
     const uri = process.env.MONGODB_URI;
