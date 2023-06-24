@@ -6,7 +6,7 @@
 
   <div>
     <img style="width: 100%; max-width: 20rem; min-width: 10rem" src="../assets/bitcoin_logo.png" />
-    <div>Version: 0.0.8 - 17 June 2023</div>
+    <div>Version: 0.0.9 - 24 June 2023</div>
   </div>
 
   <base-button-group mode="row">
