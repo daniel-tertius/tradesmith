@@ -28,9 +28,17 @@ export default async function getRouter() {
         const collection = DB.collection(collection_name);
         if (collection == null) throw Error(`Could not find the collection ${collection_name}`);
 
+        // // Get an Element
+        // router.get(`/${collection_name}/`, async (req, res) => {
+        //     console.log("Got a hit on get " + collection_name);
+        //     const config = await collection.find({}).toArray();
+        //     if (config == null) throw Error("Could not fetch config.");
+        //     res.send(JSON.stringify(config, null, 2));
+        // });
+
         // Get an Element
-        router.get(`/${collection_name}/`, async (req, res) => {
-            console.log("Got a hit on get " + collection_name);
+        router.get(`/${collection_name}/all`, async (req, res) => {
+            console.log("Got a hit on GET ALL " + collection_name);
             const config = await collection.find({}).toArray();
             if (config == null) throw Error("Could not fetch config.");
             res.send(JSON.stringify(config, null, 2));
