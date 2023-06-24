@@ -1,6 +1,5 @@
 import Button from '@/components/BaseButton.vue';
 import ButtonGroup from '@/components/BaseButtonGroup.vue';
-import BaseInput from '@/components/BaseInput.vue';
 import Banner from '@/components/BaseBanner.vue';
 import Container from '@/components/BaseContainer.vue';
 import InfoField from '@/components/InfoField.vue';
@@ -14,7 +13,6 @@ import { App } from 'vue';
 export default function addGlobalComponents(app: App<Element>) {
     app.component("base-button", Button);
     app.component("base-button-group", ButtonGroup);
-    app.component("base-input", BaseInput);
     app.component("base-banner", Banner);
     app.component("base-spinner", BaseSpinner);
     app.component("base-container", Container);
