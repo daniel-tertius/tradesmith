@@ -9,20 +9,21 @@
 
     <div>
         <tradesmith-heading />
-        <tradesmith-sub-heading :label="bot_settings.bot_name" />
+        <tradesmith-sub-heading :label="botSettings.botName" />
     </div>
 
     <div class="middle">
-        <info-field label="Base Order Size:" :value="bot_settings.base_order_size" />
-        <info-field label="Target profit (%):" :value="bot_settings.target_profit" />
+        <info-field label="Base Order Size:" :value="botSettings.baseOrderSize" />
+        <info-field label="Target profit (%):" :value="botSettings.takeProfit" />
 
         <base-button-group>
             <base-button label="View Logs" icon="list" :index="0" @click="showAlert = true" />
             <base-button label="Edit Settings" icon="edit" :index="1" @click="editSettings" />
         </base-button-group>
         <base-button-group mode="row">
-            <base-button label="Start" icon="flag-checkered" :index="0" @click="showAlert = true" />
-            <base-button label="Continue" icon="repeat" :index="1" @click="showAlert = true" />
+            <base-button label="Start" icon="flag-checkered" :index="0" @click="startBot" />
+            <base-button label="Continue" icon="repeat" :index="1" @click="showAlert = true"
+                v-if="botSettings.hasStarted" />
         </base-button-group>
     </div>
     <base-button-group>
@@ -32,6 +33,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import PostService from "../PostService";
 
 export default defineComponent({
     name: "BotLanding",
@@ -40,17 +42,30 @@ export default defineComponent({
     data() {
         return {
             showAlert: false,
-            bot_settings: {
-                bot_name: "No Name Set",
-                base_order_size: "",
-                target_profit: ""
+            botSettings: {
+                botName: "No Name Set",
+                baseOrderSize: "",
+                takeProfit: "",
+                hasStarted: false,
             }
         }
     },
     methods: {
         editSettings() {
             this.$router.push({ path: "settings/load" });
+        },
+        startBot() {
+            this.$router.push({ path: 'bot-run' })
         }
+    },
+    async created() {
+        const post = await PostService.getFirstPost();
+        if (!post) return;
+
+        this.botSettings.botName = post.bot_title;
+        this.botSettings.baseOrderSize = post.base_order_size;
+        this.botSettings.takeProfit = post.target_profit;
+        this.botSettings.hasStarted = post.has_started;
     }
 });
 </script>
