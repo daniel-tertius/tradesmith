@@ -8,7 +8,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-    __name: "BaseBanner",
+    name: "BaseBanner",
     created() {
         this.local_duration = this.$props.duration;
     },
