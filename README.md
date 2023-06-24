@@ -8,6 +8,11 @@ To Setup the server:
 Make sure you have PM2 globally installed: `npm install pm2@latest -g`.
 Make sure you have dotenv globally installed: `npm install dotenv -g`.
 
+On server, kill all previous processes: 
+`sudo pkill PM2`
+`pm2 restart all`
+
+
 ## Installation instructions
 How to install and set up the project on different operating systems and platforms.
 - - - -

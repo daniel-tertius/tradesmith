@@ -7,6 +7,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Landing from './views/MainLanding.vue';
 import Settings from './views/BotSettings.vue';
 import BotLanding from './views/BotLanding.vue';
+import BotRun from './views/BotRun.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -32,6 +33,11 @@ const router = createRouter({
             path: '/bot-landing',
             name: "BotLanding",
             component: BotLanding
+        },
+        {
+            path: '/bot-run',
+            name: "BotRun",
+            component: BotRun
         }
     ]
 });
