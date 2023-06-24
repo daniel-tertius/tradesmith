@@ -1,17 +1,42 @@
 <template>
-    <div>
+    <div :style="divClass">
         <slot></slot>
     </div>
 </template>
 
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: "BaseContainer",
+
+    computed: {
+        divClass() {
+            return {
+                height: 'calc(var(--vh, 1vh) * 98)'
+            }
+        }
+    },
+    methods: {
+        setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+    },
+    mounted() {
+        window.addEventListener('resize', this.setViewportHeight);
+        this.setViewportHeight();
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.setViewportHeight);
+    }
+})
+</script>
+
 <style scoped>
 div {
-    /* background-color: #777777; */
-    /* border-radius: 10px; */
-
     width: 100%;
     max-width: 40rem;
-    height: calc(100vh - 16px);
 
     padding: 0;
     margin: 0;
