@@ -47,6 +47,18 @@ Please include `tradsmith feedback on version <version no.>` in the status.
 ## Changelog
 Changes and updates to the project
 - - - -
+### [v0.0.9] 2023-06-24
+#### Added
+- Run But view with a chart on.
+- A get all api function.
+
+#### Fixed
+- Some spelling
+- API bug
+
+#### Removed
+- BaseInput component
+
 ### [v0.0.8] 2023-06-17
 #### Added
 - API is now managed by PM2 🚀
