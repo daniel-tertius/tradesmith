@@ -12,6 +12,10 @@ On server, kill all previous processes:
 `sudo pkill PM2`
 `pm2 restart all`
 
+Start PM2 with:
+```
+NODE_ENV="production" pm2 start ecosystem.config.js
+```
 
 ## Installation instructions
 How to install and set up the project on different operating systems and platforms.
