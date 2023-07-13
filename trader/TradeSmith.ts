@@ -76,21 +76,22 @@ export class TradeSmith {
 
             await self.LunoTrader.sellBTC(btcBalance, sellAtBtcPrice);
 
-            // Restart Immediately.
-            self.action.buy();
+            // // Restart Immediately.
+            // self.action.buy();
+
+            // Stop thereafter.
+            self.action.kill();
         }
 
         const setNextBuyAndSellOrder = async () => {
-            if (self.buyPrices.length) {
-                //Continue here
-            }
+            self.buyPrices = (!self?.buyPrices?.length) ? self.buyPrices : [await getCurrentBuyPrice()];
+
             // Set up next buy and sell orders.
             const sellPrice = getNextSellAtPrice(self.buyPrices);
             await self.LunoTrader.sellBTC(self.btcTradeAmount, sellPrice);
 
             const buyPrice = getNextBuyAtPrice(self.buyPrices);
             await self.LunoTrader.buyBTC(self.btcTradeAmount, buyPrice);
-            self.buyPrices.push(buyPrice);
         }
 
 
@@ -132,8 +133,7 @@ export class TradeSmith {
                     // calculateNextBuyAndSellPrices();
                 } else if (isSold) {
                     // TODO: Cancel old sell order.
-                    self.buyPrices = [];
-                    await self.LunoTrader.buyBTC(self.btcTradeAmount,);
+
                     setNextBuyAndSellOrder();
 
                 }

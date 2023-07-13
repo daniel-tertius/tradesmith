@@ -49,6 +49,7 @@ class DBCollection<T> {
     }
 
     async create(new_data: { title: string, message: string, actor: string, action: string, success: boolean }): Promise<void> {
+        console.log("Log:", JSON.stringify(new_data, null, 2));
         await axios.post(this.url, new_data);
     }
 }
