@@ -3,10 +3,6 @@ import axios, { AxiosResponse } from 'axios';
 // const base_url = "ec2-18-133-230-118.eu-west-2.compute.amazonaws.com";
 const base_url = "http://localhost:8000/api";
 
-interface DBResponse<T> {
-    data: T;
-}
-
 class DBCollection<T> {
     url: string;
 
@@ -15,8 +11,8 @@ class DBCollection<T> {
     }
 
     async getAll(): Promise<T[]> {
-        const res: AxiosResponse<DBResponse<T[]>> = await axios.get(`${this.url}/all`);
-        return res.data.data;
+        const res: AxiosResponse<T[]> = await axios.get(`${this.url}/all`);
+        return res.data;
     }
 
     async getSome(): Promise<T[]> {
@@ -25,8 +21,8 @@ class DBCollection<T> {
     }
 
     async getOne(): Promise<T | null> {
-        const res: AxiosResponse<DBResponse<T | null>> = await axios.get(`${this.url}/one`);
-        return res.data.data;
+        const res: AxiosResponse<T | null> = await axios.get(`${this.url}/one`);
+        return res.data;
     }
 
     async deleteSome(ids: string[]): Promise<void> {
