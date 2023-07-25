@@ -19,6 +19,7 @@ export class TradeSmith {
         this.LunoTrader = new LunoTrader(options.lunoKey, options.lunoSecret)
         this.btcGapBetweenBuys = options.btcGapBetweenBuys;
         this.profitPercentage = options.profitPercentage;
+        
         this.status = options.status;
         this.buyPrices = options.buyPrices ?? [];
         this.waitForValue.buy = options.waitForValue?.buy ?? null;
