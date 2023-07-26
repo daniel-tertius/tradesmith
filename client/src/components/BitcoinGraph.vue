@@ -39,6 +39,7 @@ export default defineComponent({
         const chartOptions: ChartOptions<'line'> = {
             responsive: true,
             maintainAspectRatio: false,
+
             scales: {
                 y: {
                     position: 'right',
@@ -50,8 +51,8 @@ export default defineComponent({
                             }
 
                             return `${price}`;
-                        },
-                    },
+                        }
+                    }
                 },
                 x: {
                     ticks: {
@@ -62,15 +63,15 @@ export default defineComponent({
                     },
                     grid: {
                         display: false,
-                    },
-                },
+                    }
+                }
             },
             plugins: {
                 legend: {
                     display: true,
                     labels: {
                         color: '#000000',
-                    },
+                    }
                 },
                 tooltip: {
                     callbacks: {
@@ -78,7 +79,7 @@ export default defineComponent({
                             console.log(tooltipItem);
                             return tooltipItem.formattedValue + '%';
                         }
-                    },
+                    }
                 }
             }
         };
@@ -144,17 +145,16 @@ export default defineComponent({
                     pointBorderColor: '#2730D6',
                     pointHoverBackgroundColor: '#fff',
                     pointHoverBorderColor: '#2730D6',
-                },
-            ],
+                }
+            ]
         };
-    },
+    }
 });
 </script>
   
 <style scoped>
 .chart {
     margin: 10px;
-    font-family: 'Helvetica Neue', sans-serif;
 }
 
 .chart-container {

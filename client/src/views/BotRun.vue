@@ -7,8 +7,10 @@
 
         <div>
             <bitcoin-graph />
-            <br />
-            <base-card title="Sample Title" message="This is a sample message." actor="John Doe" action="Update" success />
+            <div v-for="(log, index) in logs" :key="index">
+                <br />
+                <base-card :title="log.title" :message="log.message" :actor="log.actor" :action="log.action" />
+            </div>
 
         </div>
 
@@ -42,12 +44,26 @@ export default defineComponent({
     },
     methods: {
         async fetchData() {
+            // Testing info...
+            this.logs = [
+                {
+                    title: "Bought Bitcoin",
+                    message: "Bought 11 BTC at R400000",
+                    actor: "Tradesmith",
+                    action: "buy"
+                },
+                {
+                    title: "Sell Bitcoin",
+                    message: "Sold 12 BTC at R 600000",
+                    actor: "Tradesmith",
+                    action: "sell"
+                }
+            ]
             // this.logs = await DB.log.getAll();
-            // console.log("LOGS", this.logs)
         }
     },
     async created() {
-        // await this.fetchData();
+        await this.fetchData();
         // this.interval = setInterval(this.fetchData, 5000);
     },
     beforeUnmount() {
@@ -57,13 +73,3 @@ export default defineComponent({
 
 });
 </script>
-  
-<style scoped>
-.log-container {
-    width: 100%;
-    max-width: 800px;
-
-    background-color: #666666;
-    border-radius: 10px;
-}
-</style> 

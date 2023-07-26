@@ -1,9 +1,11 @@
 <template>
-    <div class="data-card" :class="{ 'success-card': success }">
-        <h2>{{ title }}</h2>
-        <p>{{ message }}</p>
-        <info-field label="Actor" :value="actor" />
-        <info-field label="Action" :value="action" />
+    <div class="log-container">
+        <div class="log">
+            <div class="log-title">{{ upperTitle }}</div>
+            <div class="log-message">{{ message }}</div>
+            <div class="log-actor">Actor: {{ actor }}</div>
+            <div class="log-action">Action: {{ action }}</div>
+        </div>
     </div>
 </template>
   
@@ -11,6 +13,11 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+    data() {
+        return {
+            upperTitle: ""
+        }
+    },
     props: {
         title: {
             type: String,
@@ -27,28 +34,53 @@ export default defineComponent({
         action: {
             type: String,
             required: true,
-        },
-        success: {
-            type: Boolean,
-            default: false,
-        },
+        }
+    },
+    mounted() {
+        this.upperTitle = this.title.toUpperCase();
     },
 });
 </script>
   
 <style scoped>
-.data-card {
-    background-color: #222;
-    color: #fff;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.log-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
-.success-card {
-    background-color: #080a2c;
-    border-radius: 20px;
+.log {
+    width: 100%;
+    max-width: 800px;
+
+    background-color: #666666;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.log-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2730D6;
+}
+
+.log-message {
+    margin-top: 8px;
+    font-size: 16px;
+    color: #DDDDDD;
+}
+
+.log-actor {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #AAAAAA;
+}
+
+.log-action {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #AAAAAA;
 }
 </style>
   
