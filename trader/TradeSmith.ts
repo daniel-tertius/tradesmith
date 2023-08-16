@@ -1,7 +1,7 @@
 import LunoTrader, { getLastPrice, getCurrentBuyPrice } from "./LunoTrader";
 
 // This is the trader itself.
-export class TradeSmith {
+export default class TradeSmith {
     private readonly idleTime: number;
     private readonly LunoTrader: LunoTrader;
     private readonly btcTradeAmount: number;
@@ -20,7 +20,7 @@ export class TradeSmith {
         this.btcGapBetweenBuys = options.btcGapBetweenBuys;
         this.profitPercentage = options.profitPercentage;
         
-        this.status = options.status;
+        this.status = options.status ?? "buy";
         this.buyPrices = options.buyPrices ?? [];
         this.waitForValue.buy = options.waitForValue?.buy ?? null;
         this.waitForValue.sell = options.waitForValue?.sell ?? null;
@@ -151,7 +151,7 @@ export class TradeSmith {
 
 type statuses = "buy" | "wait" | "kill"
 type optionsType = {
-    status: statuses,
+    status?: statuses,
     idleTime: number,
     lunoKey: string,
     lunoSecret: string,

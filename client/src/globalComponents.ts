@@ -1,3 +1,6 @@
+import { App } from 'vue';
+
+// Import components
 import Button from '@/components/BaseButton.vue';
 import ButtonGroup from '@/components/BaseButtonGroup.vue';
 import Banner from '@/components/BaseBanner.vue';
@@ -8,19 +11,24 @@ import SubHeading from '@/components/TradesmithSubHeading.vue';
 import Heading from '@/components/TradesmithHeading.vue';
 import BaseSpinner from '@/components/BaseSpinner.vue';
 
-import { App } from 'vue';
+// Define component names and their corresponding imports
+const components = {
+  'base-button': Button,
+  'base-button-group': ButtonGroup,
+  'base-banner': Banner,
+  'base-spinner': BaseSpinner,
+  'base-container': Container,
+  'info-field': InfoField,
+  'error-alert': ErrorAlert,
+  'tradesmith-sub-heading': SubHeading,
+  'tradesmith-heading': Heading,
+};
 
+// Register components globally
 export default function addGlobalComponents(app: App<Element>) {
-    app.component("base-button", Button);
-    app.component("base-button-group", ButtonGroup);
-    app.component("base-banner", Banner);
-    app.component("base-spinner", BaseSpinner);
-    app.component("base-container", Container);
-    app.component("info-field", InfoField);
-    app.component("error-alert", ErrorAlert);
+  Object.entries(components).forEach(([name, component]) => {
+    app.component(name, component);
+  });
 
-    app.component("tradesmith-sub-heading", SubHeading);
-    app.component("tradesmith-heading", Heading);
-
-    return app;
+  return app;
 }
