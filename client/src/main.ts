@@ -2,8 +2,8 @@ import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 import App from './App.vue';
-import addIcons from './fontawesome';
-import addGlobalComponents from './globalComponents';
+import addIcons from './setup/fontawesome';
+import addGlobalComponents from './setup/globalComponents';
 
 import Landing from './views/MainLanding.vue';
 import Settings from './views/BotSettings.vue';

@@ -28,8 +28,8 @@ import BitcoinGraph from '@/components/BitcoinGraph.vue';
 import BaseCard from '@/components/BaseCard.vue';
 
 import { defineComponent } from 'vue';
-import DB from '../DB';
-import TradeSmithControl from '../TradesmithControl';
+import DB from '../setup/DB';
+import TradeSmithControl from '../setup/TradesmithControl';
 
 export default defineComponent({
     components: { BitcoinGraph, BaseCard },

@@ -1,3 +1,5 @@
+// TODO: This will be depricated soon
+
 import axios from 'axios';
 
 const url = 'https://mm6hbsote0.execute-api.eu-west-2.amazonaws.com/development/config';

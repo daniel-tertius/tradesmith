@@ -38,7 +38,7 @@
   
 <script lang="ts">
 import { defineComponent } from 'vue'
-import PostService from "../PostService";
+import PostService from "../setup/PostService";
 
 import StringInput from '@/components/inputs/StringInput.vue';
 import PercentageInput from '@/components/inputs/PercentageInput.vue';

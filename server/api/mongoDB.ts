@@ -6,9 +6,8 @@ dotenv.config();
 
 export default async function getRouter(): Promise<Router> {
     const router = express.Router();
-    const DB = await connectToDatabase();
 
-    await setupDbRoutes(router, DB);
+    await setupDbRoutes(router);
     setupBotRoutes(router);
 
     return router;
@@ -16,41 +15,42 @@ export default async function getRouter(): Promise<Router> {
 
 async function connectToDatabase() {
     const uri = process.env.MONGODB_URI;
-    const db_name = process.env.MONGODB_DB_NAME;
+    const dbName = process.env.MONGODB_DB_NAME;
 
-    if (typeof uri !== "string" || typeof db_name !== "string") {
+    if (typeof uri !== "string" || typeof dbName !== "string") {
         throw new Error("Invalid MongoDB configuration");
     }
 
     const client = new MongoClient(uri);
     await client.connect();
-    return client.db(db_name);
+    return client.db(dbName);
 }
 
-async function setupDbRoutes(router: Router, DB: Db) {
+async function setupDbRoutes(router: Router) {
+    const DB = await connectToDatabase();
     const collectionNames = await getCollectionNames(DB);
 
-    for (const collection_name of collectionNames) {
-        const collection = DB.collection(collection_name);
+    for (const collectionName of collectionNames) {
+        const collection = DB.collection(collectionName);
 
         if (!collection) {
-            throw new Error(`Could not find the collection ${collection_name}`);
+            throw new Error(`Could not find the collection ${collectionName}`);
         }
 
-        router.get(`/${collection_name}/all`, async (req, res) => {
-            console.log(`Got a hit on GET ALL ${collection_name}`);
+        router.get(`/db/${collectionName}/all`, async (req, res) => {
+            console.log(`Got a hit on GET ALL ${collectionName}`);
             const config = await collection.find({}).toArray();
             res.json(config);
         });
 
-        router.post(`/${collection_name}/`, async (req, res) => {
-            console.log(`Got a hit on POST ${collection_name}`);
+        router.post(`/db/${collectionName}/`, async (req, res) => {
+            console.log(`Got a hit on POST ${collectionName}`);
             await collection.insertOne(req.body);
             res.status(201).send();
         });
 
-        router.delete(`/${collection_name}/:id`, async (req, res) => {
-            console.log(`Got a hit on DELETE ${collection_name}`);
+        router.delete(`/db/${collectionName}/:id`, async (req, res) => {
+            console.log(`Got a hit on DELETE ${collectionName}`);
             const id = new ObjectId(req.params.id);
             await collection.deleteOne({ _id: id });
             res.status(200).send();

@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import PostService from "../PostService";
+import PostService from "../setup/PostService";
 
 export default defineComponent({
     name: "BotLanding",

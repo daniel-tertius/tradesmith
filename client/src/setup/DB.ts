@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
 // const base_url = "ec2-18-133-230-118.eu-west-2.compute.amazonaws.com";
-const base_url = "http://localhost:8000/api";
+const base_url = "http://localhost:8000/api/db";
 
 class DBCollection<T> {
     url: string;
