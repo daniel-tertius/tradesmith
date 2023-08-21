@@ -1,52 +1,74 @@
 import axios, { AxiosResponse } from 'axios';
 
-// const base_url = "ec2-18-133-230-118.eu-west-2.compute.amazonaws.com";
-const base_url = "http://localhost:8000/api/db";
+// const baseUrl = "ec2-18-133-230-118.eu-west-2.compute.amazonaws.com";
+const baseUrl = "http://localhost:8000/api/db";
 
 class DBCollection<T> {
-    url: string;
+    private readonly url: string;
+    private readonly name: string;
 
-    constructor(collection_name: string) {
-        this.url = `${base_url}/${collection_name}`;
+    constructor(name: string) {
+        this.url = `${baseUrl}/${name}`;
+        this.name = name;
     }
 
     async getAll(): Promise<T[]> {
-        const res: AxiosResponse<T[]> = await axios.get(`${this.url}/all`);
-        return res.data;
+        try {
+            const res: AxiosResponse<T[]> = await axios.get(`${this.url}/all`);
+            return res.data;
+        } catch (error: any) {
+            throw new Error(`Failed to fetch data: ${error.message}`);
+        }
     }
 
-    async getSome(): Promise<T[]> {
-        // TODO: Implement getSome method
-        return [];
-    }
+    // Implement getSome method if needed
 
     async getOne(): Promise<T | null> {
-        const res: AxiosResponse<T | null> = await axios.get(`${this.url}/one`);
-        return res.data;
+        try {
+            const res: AxiosResponse<T | null> = await axios.get(`${this.url}/one`);
+            return res.data;
+        } catch (error: any) {
+            throw new Error(`Failed to fetch data: ${error.message}`);
+        }
     }
 
     async deleteSome(ids: string[]): Promise<void> {
         const joined_ids = `(${ids.join("), (")})`;
-        await axios.delete(`${this.url}/${joined_ids}`);
+        try {
+            await axios.delete(`${this.url}/${joined_ids}`);
+        } catch (error: any) {
+            throw new Error(`Failed to delete data: ${error.message}`);
+        }
     }
 
     async deleteOne(id: string): Promise<void> {
-        await axios.delete(`${this.url}/${id}`);
+        try {
+            await axios.delete(`${this.url}/${id}`);
+        } catch (error: any) {
+            throw new Error(`Failed to delete data: ${error.message}`);
+        }
     }
 
-    async updateAll(): Promise<void> {
-        // TODO: Implement updateAll method
-    }
+    // Implement updateAll method if needed
 
-    async updateOne(updated_data: { id: string; object: object }): Promise<void> {
+    async updateOne(updated_data: { id: string; object: dbObject }): Promise<void> {
         if (!updated_data) return;
 
-        await axios.post(this.url, updated_data);
+        try {
+            await axios.post(this.url, updated_data);
+        } catch (error: any) {
+            throw new Error(`Failed to update data: ${error.message}`);
+        }
     }
 
-    async create(new_data: { title: string, message: string, actor: string, action: string, success: boolean }): Promise<void> {
-        console.log("Log:", JSON.stringify(new_data, null, 2));
-        await axios.post(this.url, new_data);
+    async create(new_object: dbObject): Promise<void> {
+        try {
+            console.log(`New ${this.name}: ${JSON.stringify(new_object, null, 2)}`);
+            
+            await axios.post(this.url, new_object);
+        } catch (error: any) {
+            throw new Error(`Failed to create data: ${error.message}`);
+        }
     }
 }
 
@@ -56,3 +78,25 @@ export default class DB {
     static user = new DBCollection("users");
     static btc_price = new DBCollection("btc_price");
 }
+
+type log = {
+    title: string;
+    message: string;
+    actor: string;
+    action: string;
+    success: boolean;
+}
+
+type config = {
+
+}
+
+type user = {
+
+}
+
+type btc_price = {
+
+}
+
+type dbObject = log | config | user | btc_price

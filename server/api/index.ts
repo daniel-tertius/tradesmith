@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors'; // Prevent CORS errors
-import getRouter from "./mongoDB";
+import getRouter from "./router";
 import dotenv from 'dotenv';
 dotenv.config();
 

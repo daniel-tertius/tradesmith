@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: "../.env" });
 
 import axios from 'axios';
-import DB from "../client/src/DB";
+import DB from "../client/src/setup/DB";
 
 export default class LunoTrader {
     private keyAndSecret: string;

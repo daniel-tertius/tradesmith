@@ -38,7 +38,8 @@
   
 <script lang="ts">
 import { defineComponent } from 'vue'
-import PostService from "../setup/PostService";
+// import PostService from "../setup/PostService";
+import DB from "../setup/DB";
 
 import StringInput from '@/components/inputs/StringInput.vue';
 import PercentageInput from '@/components/inputs/PercentageInput.vue';
@@ -59,7 +60,7 @@ export default defineComponent({
 
   data: () => {
     const data: {
-      _id: string | null,
+      _id: string,
       botName: string,
       isBotNameRequired: boolean,
       baseOrderSize: string,
@@ -75,14 +76,13 @@ export default defineComponent({
       bannerMessage: string,
       banner_type: string
     } = {
-      _id: null,
+      _id: "",
       botName: "",
       isBotNameRequired: true,
       baseOrderSize: "",
       isBaseOrderSizeRequired: true,
       takeProfit: "",
       isTakeProfitRequired: true,
-
 
       isDoneLoading: false,
       isInvalid: 0,
@@ -91,6 +91,7 @@ export default defineComponent({
       bannerMessage: "",
       banner_type: ""
     }
+
     return data;
   },
 
@@ -104,13 +105,13 @@ export default defineComponent({
       this.showAlert = !isValid;
       if (!isValid) return;
 
-      const data = {
-        _id: this._id,
+      const new_config = {
         bot_name: this.botName,
         target_profit: this.takeProfit,
         base_order_size: this.baseOrderSize
       }
-      await PostService.savePost(data);
+      // await PostService.savePost(data);
+      DB.config.updateOne({ id: this._id, object: new_config })
 
       // this.showNotification();
 
@@ -139,8 +140,10 @@ export default defineComponent({
       return true;
     },
     async populateInputValues() {
+
       this.botName = "Test";
-      const post = await PostService.getFirstPost();
+      // const post = await PostService.getFirstPost();
+      const post = await DB.config.getOne() as any;
       if (!post) return;
 
       this._id = post._id;

@@ -41,7 +41,7 @@ export default class TradeSmith {
         await this.executeAction();
     }
 
-    async executeAction() {
+    private async executeAction() {
         await this.action[this.status]();
     }
 

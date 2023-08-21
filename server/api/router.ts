@@ -1,6 +1,7 @@
 import { Db, MongoClient, ObjectId } from "mongodb";
 import express, { Router } from 'express';
 import dotenv from 'dotenv';
+import Tradesmith from "../../trader/TradeSmith"
 
 dotenv.config();
 
@@ -31,8 +32,8 @@ async function setupDbRoutes(router: Router) {
     const collectionNames = await getCollectionNames(DB);
 
     for (const collectionName of collectionNames) {
+        console.log(collectionName)
         const collection = DB.collection(collectionName);
-
         if (!collection) {
             throw new Error(`Could not find the collection ${collectionName}`);
         }
@@ -40,6 +41,12 @@ async function setupDbRoutes(router: Router) {
         router.get(`/db/${collectionName}/all`, async (req, res) => {
             console.log(`Got a hit on GET ALL ${collectionName}`);
             const config = await collection.find({}).toArray();
+            res.json(config);
+        });
+
+        router.get(`/db/${collectionName}/one`, async (req, res) => {
+            console.log(`Got a hit on GET One ${collectionName}`);
+            const config = await collection.findOne();
             res.json(config);
         });
 
@@ -66,18 +73,28 @@ async function getCollectionNames(DB: Db): Promise<string[]> {
 }
 
 function setupBotRoutes(router: Router) {
+    let tradesmith: Tradesmith;
+
     router.post(`/bot/start`, (req, res) => {
+        console.log("Start Body:", JSON.stringify(req.body, null, 2));
+        tradesmith = new Tradesmith({
+            ...req.body
+        });
+        tradesmith.start();
         console.log(`Got a hit on START bot`);
         res.sendStatus(201);
     });
 
     router.post(`/bot/stop`, (req, res) => {
         console.log(`Got a hit on STOP bot`);
+        tradesmith.stop();
         res.sendStatus(201);
     });
 
     router.post(`/bot/continue`, (req, res) => {
         console.log(`Got a hit on CONTINUE bot`);
+        tradesmith.start();
+
         res.sendStatus(201);
     });
 }
