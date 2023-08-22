@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import PostService from "../setup/PostService";
+import DB from "../setup/DB";
 
 export default defineComponent({
     name: "BotLanding",
@@ -59,13 +59,13 @@ export default defineComponent({
         }
     },
     async created() {
-        const post = await PostService.getFirstPost();
-        if (!post) return;
+        const config: any = await DB.config.getOne();
+        if (!config) return;
 
-        this.botSettings.botName = post.bot_title;
-        this.botSettings.baseOrderSize = post.base_order_size;
-        this.botSettings.takeProfit = post.target_profit;
-        this.botSettings.hasStarted = post.has_started;
+        this.botSettings.botName = config.bot_title;
+        this.botSettings.baseOrderSize = config.base_order_size;
+        this.botSettings.takeProfit = config.target_profit;
+        this.botSettings.hasStarted = config.has_started;
     }
 });
 </script>

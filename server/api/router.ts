@@ -1,9 +1,10 @@
 import { Db, MongoClient, ObjectId } from "mongodb";
 import express, { Router } from 'express';
-import dotenv from 'dotenv';
 import Tradesmith from "../../trader/TradeSmith"
 
+import dotenv from 'dotenv';
 dotenv.config();
+
 
 export default async function getRouter(): Promise<Router> {
     const router = express.Router();
@@ -32,7 +33,6 @@ async function setupDbRoutes(router: Router) {
     const collectionNames = await getCollectionNames(DB);
 
     for (const collectionName of collectionNames) {
-        console.log(collectionName)
         const collection = DB.collection(collectionName);
         if (!collection) {
             throw new Error(`Could not find the collection ${collectionName}`);
