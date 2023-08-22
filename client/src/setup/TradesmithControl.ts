@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-// const base_url = "http://ec2-18-133-230-118.eu-west-2.compute.amazonaws.com";
-const base_url = "http://localhost:8000/api/bot";
+const baseUrl = process.env.API_BASE_URL;
 
 export default class TradeSmithControl {
     private static async get(name: string) {
-        const res = await axios.post(`${base_url}/${name}`);
+        const res = await axios.post(`${baseUrl}/bot/${name}`);
         console.log(res.status);
     }
 

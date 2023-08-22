@@ -1,5 +1,4 @@
 const { defineConfig } = require('@vue/cli-service');
-const path = require('path');
 
 module.exports = {
   ...defineConfig({
@@ -20,6 +19,6 @@ module.exports = {
         "crypto": require.resolve("crypto-browserify"),
         "stream": require.resolve("stream-browserify"),
       },
-    },
-  },
-}
+    }
+  }
+};

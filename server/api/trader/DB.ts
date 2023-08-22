@@ -1,4 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const baseUrl = process.env.API_BASE_URL;
 
