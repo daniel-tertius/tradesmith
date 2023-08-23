@@ -3,7 +3,7 @@
         <div class="log">
             <div class="log-title">{{ upperTitle }}</div>
             <div class="log-message">{{ message }}</div>
-            <div class="log-actor">Actor: {{ actor }}</div>
+            <div class="log-actor">Actor: {{ actor }} at {{ created_at || "<no time given>" }}</div>
             <div class="log-action">Action: {{ action }}</div>
         </div>
     </div>
@@ -34,6 +34,10 @@ export default defineComponent({
         action: {
             type: String,
             required: true,
+        },
+        created_at: {
+            type: Date,
+            required: true
         }
     },
     mounted() {
