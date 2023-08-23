@@ -5,7 +5,7 @@ import axios from 'axios';
 import DB from "./DB";
 
 export default class LunoTrader {
-    private keyAndSecret: string;
+    private readonly keyAndSecret: string;
 
     constructor(key: string, secret: string) {
         this.keyAndSecret = `${key}:${secret}`;
@@ -23,6 +23,7 @@ export default class LunoTrader {
         const result = await LunoTrader.trade("BID", btcPrice, btcBuyAmount);
         DB.log.create({
             title: `Bought BTC`,
+            created_at: new Date(),
             message: `Bought ${btcBuyAmount} BTC @ ${btcPrice}`,
             action: "buy",
             actor: "LunoTrader",
@@ -42,6 +43,7 @@ export default class LunoTrader {
         const result = await LunoTrader.trade('ASK', btcPrice, btcSellAmount);
         DB.log.create({
             title: `Sold BTC`,
+            created_at: new Date(),
             message: `Sold ${btcSellAmount} BTC @ ${btcPrice}`,
             action: "sell",
             actor: "LunoTrader",

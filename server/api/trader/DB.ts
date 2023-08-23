@@ -81,6 +81,7 @@ export default class DB {
 }
 
 type log = {
+    created_at: Date;
     title: string;
     message: string;
     actor: string;

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const baseUrl = process.env.API_BASE_URL;
+const baseUrl = process.env.VUE_APP_API_BASE_URL;
 
 class DBCollection<T> {
     private readonly url: string;
@@ -11,9 +11,9 @@ class DBCollection<T> {
         this.name = name;
     }
 
-    async getAll(): Promise<T[]> {
+    async getAll(): Promise<any[]> {
         try {
-            const res: AxiosResponse<T[]> = await axios.get(`${this.url}/all`);
+            const res: AxiosResponse = await axios.get(`${this.url}/all`);
             return res.data;
         } catch (error: any) {
             throw new Error(`Failed to fetch data: ${error.message}`);

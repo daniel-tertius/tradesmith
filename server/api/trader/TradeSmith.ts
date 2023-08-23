@@ -8,7 +8,7 @@ export default class TradeSmith {
     private readonly btcGapBetweenBuys: number;
     private readonly profitPercentage: number;
 
-    private status: statuses;
+    protected status: statuses;
     private loop: NodeJS.Timer | null = null;
     private waitForValue: { buy: number | null, sell: number | null } = { buy: null, sell: null }
     private buyPrices: number[];
@@ -16,10 +16,10 @@ export default class TradeSmith {
     constructor(options: optionsType) {
         this.idleTime = options.idleTime;
         this.btcTradeAmount = options.btcTradeAmount;
-        this.LunoTrader = new LunoTrader(options.lunoKey, options.lunoSecret)
+        this.LunoTrader = new LunoTrader(options.lunoKey, options.lunoSecret);
         this.btcGapBetweenBuys = options.btcGapBetweenBuys;
         this.profitPercentage = options.profitPercentage;
-        
+
         this.status = options.status ?? "buy";
         this.buyPrices = options.buyPrices ?? [];
         this.waitForValue.buy = options.waitForValue?.buy ?? null;
@@ -45,8 +45,13 @@ export default class TradeSmith {
         await this.action[this.status]();
     }
 
+    private updateStatus(newStatus: statuses) {
+        this.status = newStatus;
+    }
+
     get action() {
         const self = this;
+
         // Helper Functions
         const getNextSellAtPrice = (buyPrices: number[]) => {
             if (!buyPrices || !buyPrices.length) {
@@ -76,12 +81,6 @@ export default class TradeSmith {
             const btcBalance = await self.LunoTrader.queryBTCBalance();
 
             await self.LunoTrader.sellBTC(btcBalance, sellAtBtcPrice);
-
-            // // Restart Immediately.
-            // self.action.buy();
-
-            // Stop thereafter.
-            self.action.kill();
         }
 
         const setNextBuyAndSellOrder = async () => {
@@ -95,7 +94,6 @@ export default class TradeSmith {
             await self.LunoTrader.buyBTC(self.btcTradeAmount, buyPrice);
         }
 
-
         return {
             async buy() {
                 const currentBuyPrice = await getCurrentBuyPrice();
@@ -105,7 +103,7 @@ export default class TradeSmith {
                 setNextBuyAndSellOrder();
 
                 // Update bot's status.
-                self.status = "wait";
+                self.updateStatus('wait');
             },
 
             async wait() {
@@ -113,7 +111,7 @@ export default class TradeSmith {
                     throw Error(`Status cannot be 'wait' while waitForValue has value of: ${JSON.stringify(self.waitForValue)}.`);
                 }
 
-                const btcPrice = await getLastPrice();
+                // const btcPrice = await getLastPrice();
                 const openOrders = await self.LunoTrader.getOpenOrders();
                 if (!openOrders) throw Error("Could not get open orders");
 
@@ -126,6 +124,7 @@ export default class TradeSmith {
                     // If bot bought 5 times in a row, sell all btc there is.
                     const hasReachedMaxBuys = self.buyPrices.length >= 5;
                     if (hasReachedMaxBuys) {
+                        self.updateStatus('kill');
                         return sellAllBTC(self.buyPrices);
                     }
 

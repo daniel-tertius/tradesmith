@@ -6,13 +6,14 @@
         </div>
 
         <div>
-            <base-button label="Start" icon="flag-checkered" @click="startBot" v-if="start"/>
-            <base-button label="Pause" icon="repeat" @click="startBot" v-if="!start"/>
-            
+            <base-button label="Start" icon="flag-checkered" @click="startBot" v-if="!start" />
+            <base-button label="Pause" icon="repeat" @click="startBot" v-if="start" />
+            <br />
+            <br />
             <bitcoin-graph />
             <div v-for="(log, index) in logs" :key="index">
                 <br />
-                <base-card :title="log.title" :message="log.message" :actor="log.actor" :action="log.action" />
+                <base-card :title="log.title" :message="log.message" :actor="log.actor" :action="log.action" :created_at="log.created_at" />
             </div>
 
         </div>
@@ -71,11 +72,23 @@ export default defineComponent({
         async startBot() {
             this.start = !this.start;
             if (this.start) {
-                await TradeSmithControl.start();
+                const post = await DB.config.getOne() as any;
+                var data = {
+                    botTitle: post.bot_title,
+                    baseOrderSize: post.base_order_size,
+                    targetProfit: post.target_profit,
+                    idleTime: 30 * 1000,
+                    lunoKey: process.env.VUE_APP_LUNO_API_KEY,
+                    lunoSecret: process.env.VUE_APP_LUNO_API_SECRET,
+                    btcTradeAmount: 0.0001,
+                    btcGapBetweenBuys: 1000,
+                    profitPercentage: 5,
+                }
+                await TradeSmithControl.start(data);
             } else {
                 await TradeSmithControl.stop();
             }
-            
+
         }
     },
     async created() {

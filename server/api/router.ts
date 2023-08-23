@@ -5,6 +5,7 @@ import Tradesmith from "./trader/TradeSmith"
 import dotenv from 'dotenv';
 dotenv.config();
 
+let tradesmith: Tradesmith; 
 
 export default async function getRouter(): Promise<Router> {
     const router = express.Router();
@@ -73,8 +74,6 @@ async function getCollectionNames(DB: Db): Promise<string[]> {
 }
 
 function setupBotRoutes(router: Router) {
-    let tradesmith: Tradesmith;
-
     router.post(`/bot/start`, (req, res) => {
         console.log("Start Body:", JSON.stringify(req.body, null, 2));
         tradesmith = new Tradesmith({
