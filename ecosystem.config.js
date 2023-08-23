@@ -2,7 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'Data Fetcher Compiler',
-      script: 'server/data_fetcher/script.sh',
+      script: 'bash run',
+      cwd: 'server/data_fetcher/',
       autorestart: false,
     },
     {
@@ -15,7 +16,8 @@ module.exports = {
     },
     {
       name: 'Tradesmith API',
-      script: 'server/api/script.sh',
+      script: 'bash run',
+      cwd: 'server/api/'
     },
     {
       name: "Tradesmith",

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# Change directory and compile TypeScript
-cd server/api || { echo "Error: Unable to change directory."; exit 1; }
+# Compile TypeScript
 npx tsc || { echo "Error: TypeScript compilation failed."; exit 1; }
 
 # Run the Node.js server
