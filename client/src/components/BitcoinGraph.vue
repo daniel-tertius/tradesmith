@@ -6,7 +6,7 @@
   
 <script lang="ts">
 import { defineComponent } from 'vue';
-// import DB from '../DB';
+import DB from '../setup/DB';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -91,25 +91,23 @@ export default defineComponent({
     },
     async mounted() {
         const fetchData = async () => {
-            // const allPrices: {
-            //     _id: string;
-            //     timestamp: any;
-            //     price: any;
-            // }[] = await DB.btc_price.getAll();
-            // return allPrices.map((price) => ({
-            //     timestamp: price.timestamp,
-            //     price: price.price,
-            // }));
-            let price = 500000;
-            let timestamp = 1685577600000;
-            const data = [];
-            for (let i = 0; i < 10000; i++) {
-                data.push({
-                    timestamp: timestamp += Math.floor(Math.random() * 5000000),
-                    price: price += Math.floor(Math.random() * 500 - 250)
-                })
-            }
-            return data;
+            const allPrices: {
+                _id: string;
+                timestamp: any;
+                price: any;
+            }[] = await DB.btc_price.getAll();
+            console.log("allPrices.length", allPrices.length);
+            return allPrices.map(({ timestamp, price }) => ({ timestamp, price, }));
+            // let price = 500000;
+            // let timestamp = 1685577600000;
+            // const data = [];
+            // for (let i = 0; i < 10000; i++) {
+            //     data.push({
+            //         timestamp: timestamp += Math.floor(Math.random() * 5000000),
+            //         price: price += Math.floor(Math.random() * 500 - 250)
+            //     })
+            // }
+            // return data;
         };
 
         const allPrices = await fetchData();
