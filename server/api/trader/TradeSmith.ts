@@ -49,7 +49,7 @@ export default class TradeSmith {
         this.status = newStatus;
     }
 
-    get action() {
+    private get action() {
         const self = this;
 
         // Helper Functions
