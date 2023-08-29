@@ -13,7 +13,8 @@
             <bitcoin-graph />
             <div v-for="(log, index) in logs" :key="index">
                 <br />
-                <base-card :title="log.title" :message="log.message" :actor="log.actor" :action="log.action" :created_at="log.created_at" />
+                <base-card :title="log.title" :message="log.message" :actor="log.actor" :action="log.action"
+                    :created_at="log.created_at" />
             </div>
 
         </div>
@@ -29,8 +30,9 @@ import BitcoinGraph from '@/components/BitcoinGraph.vue';
 import BaseCard from '@/components/BaseCard.vue';
 
 import { defineComponent } from 'vue';
-import DB from '../setup/DB';
-import TradeSmithControl from '../setup/TradesmithControl';
+import DB from '../helpers/DB';
+import TradeSmithControl from '../helpers/TradesmithControl';
+import WhatsappControl from '../helpers/WhatsappControl';
 
 export default defineComponent({
     components: { BitcoinGraph, BaseCard },
@@ -85,6 +87,9 @@ export default defineComponent({
                     profitPercentage: 5,
                 }
                 await TradeSmithControl.start(data);
+
+                const waControl = new WhatsappControl(process.env.VUE_APP_WA_AUTH_KEY);
+                await waControl.sendMessage("Hello, World!");
             } else {
                 await TradeSmithControl.stop();
             }

@@ -13,8 +13,8 @@ class DBCollection<T> {
 
     async getAll(): Promise<any[]> {
         try {
-            const res: AxiosResponse = await axios.get(`${this.url}/all`);
-            return res.data;
+            // const res: AxiosResponse = await axios.get(`${this.url}/all`);
+            return []//res.data;
         } catch (error: any) {
             throw new Error(`Failed to fetch data: ${error.message}`);
         }
@@ -22,10 +22,10 @@ class DBCollection<T> {
 
     // Implement getSome method if needed
 
-    async getOne(): Promise<T | null> {
+    async getOne() {
         try {
-            const res: AxiosResponse<T | null> = await axios.get(`${this.url}/one`);
-            return res.data;
+            // const res: AxiosResponse<T | null> = await axios.get(`${this.url}/one`);
+            return {}//res.data;
         } catch (error: any) {
             throw new Error(`Failed to fetch data: ${error.message}`);
         }
@@ -63,7 +63,7 @@ class DBCollection<T> {
     async create(new_object: dbObject): Promise<void> {
         try {
             console.log(`New ${this.name}: ${JSON.stringify(new_object, null, 2)}`);
-            
+
             await axios.post(this.url, new_object);
         } catch (error: any) {
             throw new Error(`Failed to create data: ${error.message}`);

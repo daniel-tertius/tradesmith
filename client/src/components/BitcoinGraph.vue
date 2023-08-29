@@ -6,7 +6,7 @@
   
 <script lang="ts">
 import { defineComponent } from 'vue';
-import DB from '../setup/DB';
+import DB from '../helpers/DB';
 import {
     Chart as ChartJS,
     CategoryScale,
