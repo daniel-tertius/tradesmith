@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Compile using TypeScript
+npm i || { echo "Error: Installation failed"; exit 1; }
 npx tsc || { echo "Error: Compilation failed"; exit 1; }
 
 echo "DONE Compiling Data Fetcher 🛠️"
