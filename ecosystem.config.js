@@ -10,8 +10,8 @@ module.exports = {
       name: 'Data Fetcher',
       script: 'node server/data_fetcher/dist/index.js',
 
-      // Run every hour in production, every minute in development
-      cron_restart: process.env.NODE_ENV === 'production' ? '0 * * * *' : '*/1 * * * *',
+      // Run every hour in production, every minute in development ('*/1 * * * *')
+      cron_restart: process.env.NODE_ENV === 'production' ? '0 * * * *' : '0 * * * *',
       autorestart: false,
     },
     {
