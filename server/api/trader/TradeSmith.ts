@@ -1,4 +1,6 @@
 import LunoTrader, { getLastPrice, getCurrentBuyPrice } from "./LunoTrader";
+import { substring, isError, inRange } from "../hepers/helpers";
+import { optionsType, statuses } from "../types/types";
 
 // This is the trader itself.
 export default class TradeSmith {
@@ -7,16 +9,18 @@ export default class TradeSmith {
     private readonly btcTradeAmount: number;
     private readonly btcGapBetweenBuys: number;
     private readonly profitPercentage: number;
+    private readonly isDebugging: boolean;
 
-    protected status: statuses;
+    private status: statuses;
     private loop: NodeJS.Timer | null = null;
     private waitForValue: { buy: number | null, sell: number | null } = { buy: null, sell: null }
     private buyPrices: number[];
 
     constructor(options: optionsType) {
+        this.isDebugging = !!options.isDebugging;
         this.idleTime = options.idleTime;
         this.btcTradeAmount = options.btcTradeAmount;
-        this.LunoTrader = new LunoTrader(options.lunoKey, options.lunoSecret);
+        this.LunoTrader = new LunoTrader(options.lunoKey, options.lunoSecret, this.isDebugging);
         this.btcGapBetweenBuys = options.btcGapBetweenBuys;
         this.profitPercentage = options.profitPercentage;
 
@@ -28,138 +32,129 @@ export default class TradeSmith {
 
     start() {
         try {
-            this.executeAction();
-            this.loop = setInterval(this.executeAction, this.idleTime);
+            const executeAction = this.executeAction.bind(this);
+            executeAction();
+            this.loop = setInterval(executeAction, this.idleTime);
         } catch (error: any) {
-            console.error(error.stack || typeof error === "string" ? error : JSON.stringify(error, (key, value) => (value + "").length > 200 ? value.slice(0, 200) + "..." : value, 2));
+            // console.error(isError(error) ? error.stack : JSON.stringify(error, (k, v) => substring(v), 2));
+            console.error(error.message);
             this.stop();
         }
     }
 
     async stop() {
         this.status = "kill";
-        await this.executeAction();
+        await this.executeAction.call(this);
     }
 
     private async executeAction() {
+        console.log("Tradesmith 'this':", JSON.stringify(this, null, 2))
         await this.action[this.status]();
     }
 
     private updateStatus(newStatus: statuses) {
+        console.log(`[TRADESMITH - updateStatus] New Status: ${newStatus}`);
         this.status = newStatus;
     }
 
-    private get action() {
-        const self = this;
-
+    private action = {
         // Helper Functions
-        const getNextSellAtPrice = (buyPrices: number[]) => {
+        getNextSellAtPrice: (buyPrices: number[]): number => {
             if (!buyPrices || !buyPrices.length) {
                 throw Error(`Cannot calculate new sell price. Current buyPrices = ${buyPrices}.`);
             }
 
             const averageBuyPrice = buyPrices.reduce((total, price) => total + price) / buyPrices.length;
-            const sellPrice = averageBuyPrice * (1 + self.profitPercentage);
+            const sellPrice = averageBuyPrice * (1 + this.profitPercentage);
 
+            console.log(`[TRADESMITH - getNextSellAtPrice] sellPrice: ${sellPrice}`);
             return sellPrice;
-        }
-        const getNextBuyAtPrice = (buyPrices: number[]) => {
-            if (!buyPrices || buyPrices.length < 1 || buyPrices.length > 4) {
+        },
+
+        getNextBuyAtPrice: (buyPrices: number[]) => {
+            if (!inRange(buyPrices, 1, 4)) {
                 throw Error(`Cannot calculate new buy price. Current buyPrices = ${buyPrices}.`);
             }
 
             const lastBuyPrice = buyPrices[buyPrices.length - 1];
-            return lastBuyPrice - self.btcGapBetweenBuys;
-        }
+            const buyPrice = lastBuyPrice - this.btcGapBetweenBuys;
 
-        const sellAllBTC = async (buyPrices: number[]) => {
-            if (buyPrices == null || buyPrices.length !== 5) {
+            console.log(`[TRADESMITH - getNextBuyAtPrice] sellPrice: ${buyPrice}`);
+            return buyPrice
+        },
+
+        sellAllBTC: async (buyPrices: number[]) => {
+            if (!inRange(buyPrices, 5)) {
                 throw Error(`When selling all BTC, the number of consecutive buys has to be five. Found: ${buyPrices}.`)
             }
 
-            const sellAtBtcPrice = getNextSellAtPrice(buyPrices);
-            const btcBalance = await self.LunoTrader.queryBTCBalance();
+            const sellAtBtcPrice = this.action.getNextSellAtPrice(buyPrices);
+            const btcBalance = await this.LunoTrader.queryBTCBalance();
 
-            await self.LunoTrader.sellBTC(btcBalance, sellAtBtcPrice);
-        }
+            console.log(`[TRADESMITH - sellAllBTC] Selling All BTC`);
+            await this.LunoTrader.sellBTC(btcBalance, sellAtBtcPrice);
+        },
 
-        const setNextBuyAndSellOrder = async () => {
-            self.buyPrices = (!self?.buyPrices?.length) ? self.buyPrices : [await getCurrentBuyPrice()];
+        setNextBuyAndSellOrder: async () => {
+            this.buyPrices = (!this.buyPrices?.length) ? this.buyPrices : [await getCurrentBuyPrice()];
+            console.log(`[TRADESMITH - setNextBuyAndSellOrder] BuyPrices: ${this.buyPrices}`);
 
             // Set up next buy and sell orders.
-            const sellPrice = getNextSellAtPrice(self.buyPrices);
-            await self.LunoTrader.sellBTC(self.btcTradeAmount, sellPrice);
+            const sellPrice = this.action.getNextSellAtPrice(this.buyPrices);
+            await this.LunoTrader.sellBTC(this.btcTradeAmount, sellPrice);
+            this.waitForValue.sell = sellPrice;
 
-            const buyPrice = getNextBuyAtPrice(self.buyPrices);
-            await self.LunoTrader.buyBTC(self.btcTradeAmount, buyPrice);
-        }
+            const buyPrice = this.action.getNextBuyAtPrice(this.buyPrices);
+            await this.LunoTrader.buyBTC(this.btcTradeAmount, buyPrice);
+            this.waitForValue.buy = buyPrice;
+        },
 
-        return {
-            async buy() {
-                const currentBuyPrice = await getCurrentBuyPrice();
-                await self.LunoTrader.buyBTC(self.btcTradeAmount, currentBuyPrice);
-                self.buyPrices.push(currentBuyPrice);
+        buy: async () => {
+            const currentBuyPrice = await getCurrentBuyPrice();
+            await this.LunoTrader.buyBTC(this.btcTradeAmount, currentBuyPrice);
+            this.buyPrices.push(currentBuyPrice);
 
-                setNextBuyAndSellOrder();
+            this.action.setNextBuyAndSellOrder();
 
-                // Update bot's status.
-                self.updateStatus('wait');
-            },
+            // Update bot's status.
+            this.updateStatus('wait');
+        },
 
-            async wait() {
-                if (self.waitForValue.sell == null || self.waitForValue.buy == null) {
-                    throw Error(`Status cannot be 'wait' while waitForValue has value of: ${JSON.stringify(self.waitForValue)}.`);
-                }
-
-                // const btcPrice = await getLastPrice();
-                const openOrders = await self.LunoTrader.getOpenOrders();
-                if (!openOrders) throw Error("Could not get open orders");
-
-                const isBought = !openOrders.bids.find((bid) => +bid.price === self.waitForValue.buy);
-                const isSold = !openOrders.asks.find((ask) => +ask.price === self.waitForValue.sell);
-
-                if (isBought) {
-                    // TODO: Cancel old sell order.
-
-                    // If bot bought 5 times in a row, sell all btc there is.
-                    const hasReachedMaxBuys = self.buyPrices.length >= 5;
-                    if (hasReachedMaxBuys) {
-                        self.updateStatus('kill');
-                        return sellAllBTC(self.buyPrices);
-                    }
-
-                    setNextBuyAndSellOrder();
-
-                    // calculateNextBuyAndSellPrices();
-                } else if (isSold) {
-                    // TODO: Cancel old sell order.
-
-                    setNextBuyAndSellOrder();
-
-                }
-            },
-
-            kill() {
-                if (!self.loop) return;
-
-                clearInterval(self.loop);
+        wait: async () => {
+            if (this.waitForValue.sell == null || this.waitForValue.buy == null) {
+                throw Error(`Status cannot be 'wait' while waitForValue has value of: ${JSON.stringify(this.waitForValue)}.`);
             }
+
+            // const btcPrice = await getLastPrice();
+            const openOrders = await this.LunoTrader.getOpenOrders();
+
+            const boughtOrder = openOrders?.find(({ type, state, limit_price }) =>
+                type === "BUY" && state === "COMPLETE" && limit_price === this.waitForValue.buy?.toString()
+            );
+            const soldOrder = openOrders?.find(({ type, state, limit_price }) =>
+                type === "SELL" && state === "COMPLETE" && limit_price === this.waitForValue.sell?.toString()
+            );
+
+            if (!boughtOrder && soldOrder) {
+                this.LunoTrader.cancelOrder(soldOrder.order_id);
+
+                // If bot bought 5 times in a row, sell all btc there is.
+                const hasReachedMaxBuys = this.buyPrices.length >= 5;
+                if (hasReachedMaxBuys) {
+                    this.updateStatus('kill');
+                    return this.action.sellAllBTC(this.buyPrices);
+                }
+            } else if (!soldOrder && boughtOrder) {
+                this.LunoTrader.cancelOrder(boughtOrder.order_id);
+            }
+
+            this.action.setNextBuyAndSellOrder();
+        },
+
+        kill: () => {
+            if (!this.loop) return;
+
+            clearInterval(this.loop);
         }
     }
-}
-
-type statuses = "buy" | "wait" | "kill"
-type optionsType = {
-    status?: statuses,
-    idleTime: number,
-    lunoKey: string,
-    lunoSecret: string,
-    btcTradeAmount: number,
-    btcGapBetweenBuys: number,
-    profitPercentage: number
-    waitForValue?: {
-        buy: number,
-        sell: number
-    },
-    buyPrices?: number[]
 }

@@ -1,4 +1,6 @@
-import dotenv from 'dotenv';
+import { substring, isError } from "../hepers/helpers";
+import { lunoOrder } from "../types/types";
+import * as dotenv from 'dotenv';
 dotenv.config({ path: ".env" });
 
 import axios from 'axios';
@@ -6,13 +8,14 @@ import DB from "./DB";
 
 export default class LunoTrader {
     private readonly keyAndSecret: string;
+    private readonly isDebugging: boolean;
 
-    constructor(key: string, secret: string) {
+    constructor(key: string, secret: string, isDebugging: boolean = false) {
         this.keyAndSecret = `${key}:${secret}`;
+        this.isDebugging = isDebugging;
     }
 
     async buyBTC(btcBuyAmount: number, btcPrice: number) {
-
         const zarNeeded = btcBuyAmount * btcPrice;
         const zarBalance = await this.queryZARBalance();
 
@@ -20,15 +23,17 @@ export default class LunoTrader {
             throw Error(`Your ZAR Balance (${zarBalance}) is too low to buy ${btcBuyAmount} at R ${btcPrice.toFixed(0)} per BTC.`);
         }
 
-        const result = await LunoTrader.trade("BID", btcPrice, btcBuyAmount);
-        DB.log.create({
-            title: `Bought BTC`,
-            created_at: new Date(),
-            message: `Bought ${btcBuyAmount} BTC @ ${btcPrice}`,
-            action: "buy",
-            actor: "LunoTrader",
-            success: result.success
-        })
+        const result = await this.trade("BID", btcPrice, btcBuyAmount);
+        if (!this.isDebugging) {
+            await DB.log.create({
+                title: `Bought BTC`,
+                created_at: new Date(),
+                message: `Bought ${btcBuyAmount} BTC @ ${btcPrice}`,
+                action: "buy",
+                actor: "LunoTrader",
+                success: result.success
+            })
+        }
 
         return result;
     }
@@ -40,15 +45,17 @@ export default class LunoTrader {
             throw Error(`Your BTC Balance (${btcBalance}) is too low to sell ${btcSellAmount}.`);
         }
 
-        const result = await LunoTrader.trade('ASK', btcPrice, btcSellAmount);
-        DB.log.create({
-            title: `Sold BTC`,
-            created_at: new Date(),
-            message: `Sold ${btcSellAmount} BTC @ ${btcPrice}`,
-            action: "sell",
-            actor: "LunoTrader",
-            success: result.success
-        });
+        const result = await this.trade('ASK', btcPrice, btcSellAmount);
+        if (!this.isDebugging) {
+            await DB.log.create({
+                title: `Sold BTC`,
+                created_at: new Date(),
+                message: `Sold ${btcSellAmount} BTC @ ${btcPrice}`,
+                action: "sell",
+                actor: "LunoTrader",
+                success: result.success
+            });
+        }
 
         return result;
     }
@@ -83,18 +90,17 @@ export default class LunoTrader {
         }
     }
 
-    async getOpenOrders(): Promise<null | { asks: { price: string, volume: string }[], bids: { price: string, volume: string }[] }> {
+    async getOpenOrders(): Promise<null | lunoOrder[]> {
         const headers = this.getHeaders();
         const url = process.env.LUNO_OPEN_ORDERS_URL;
         if (!url) throw Error("Could not find Luno Open Orders URL");
 
         try {
             const response = await axios.get(url, headers);
-
-            return response.data;
+            return response.data.orders;
         } catch (error: any) {
-            console.error(`Failed to fetch Open Orders: ${error.message}`);
-            return null;
+            const errorText = isError(error) ? error.stack : JSON.stringify(error, (k, v) => substring(v), 2)
+            throw Error(`Failed to fetch Open Orders: ${errorText}`);
         }
     }
 
@@ -106,7 +112,7 @@ export default class LunoTrader {
         const response = await axios.post(url, { "order_id": orderId }, headers);
         const is_success = response.status.toString().startsWith('2');
 
-        DB.log.create({
+        await DB.log.create({
             title: `Cancelled Order`,
             message: `Canceled Order with ID ${orderId}.`,
             action: "cancelOrder",
@@ -135,9 +141,6 @@ export default class LunoTrader {
         return url;
     }
 
-
-
-
     /*async getBuyPrice(): Promise<number> {
         const luno_url = process.env.LUNO_GET_PRICE_URL
         if (luno_url == null) throw Error("Could not find the LUNO API URL.");
@@ -158,35 +161,46 @@ export default class LunoTrader {
     }*/
 
 
-    private static async trade(type: 'ASK' | 'BID', btcPrice: number, btcAmount: number) {
-
-
+    private async trade(type: 'ASK' | 'BID', btcPrice: number, btcAmount: number) {
         const typeConvert = { ASK: "Selling", BID: "Buying" }
         console.log(`📈 ${typeConvert[type]} ${btcAmount} BTC at R ${btcPrice.toFixed(0)} per BTC.`);
 
-        const response = { status: 200 } /*await axios({
-        method: "post",
-        url: "https://api.luno.com/api/1/postorder",
-        auth: {
-          username: process.env.LUNO_API_KEY as string,
-          password: process.env.LUNO_API_SECRET as string
-        },
-        data: jsonToURLEncodedForm({
-          "pair": "XBTZAR",
-          "type": type,
-          "volume": btcAmount.toString(),
-          "price": btcPrice.toString()
-        })
-      });*/
+        const url = process.env.LUNO_TRADE_URL;
+        if (!url) throw Error("Could not find Luno Trade URL");
 
-        const success = response.status.toString().startsWith("2");
-        console.log(success ? "Success :)" : "Failed :(");
+        try {
+            if (this.isDebugging) return { success: true }
+            const response = await axios({
+                method: "post",
+                url: "https://api.luno.com/api/1/postorder",
+                auth: {
+                    username: process.env.LUNO_API_KEY as string,
+                    password: process.env.LUNO_API_SECRET as string
+                },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                data: jsonToURLEncodedForm({
+                    "pair": "XBTZAR",
+                    "type": type,
+                    "volume": btcAmount.toString(),
+                    "price": btcPrice.toString()
+                })
+            });
 
-        return { success };
+            const success = response.status.toString().startsWith("2");
+            console.log(success ? "Success :)" : "Failed :(");
+
+            return { success };
+        } catch (error: any) {
+            console.log("Failed trade", error?.message);
+            throw Error("Failed to trade");
+        }
     }
 }
 
 function jsonToURLEncodedForm(json: Record<string, string | number> = {}) {
+    console.log("JSON TO URL:", Object.entries(json).map(([key, value]) => `${key}=${value}`).join('&'))
     return Object.entries(json).map(([key, value]) => `${key}=${value}`).join('&');
 }
 
