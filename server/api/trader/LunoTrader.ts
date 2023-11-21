@@ -77,10 +77,26 @@ export default class LunoTrader {
 
     async queryBTCBalance() {
         const headers = this.getHeaders();
+        console.log("HEADERS", JSON.stringify(headers, null, 2))
         const url = this.getLunoBalanceURL()
+        console.log("URL", JSON.stringify(url, null, 2))
 
         try {
-            const response = await axios.get(url, headers);
+            const response = await axios({
+                url: url,
+                method: "get",
+                auth: {
+                    username: process.env.LUNO_API_KEY as string,
+                    password: process.env.LUNO_API_SECRET as string
+                },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                },
+                data: jsonToURLEncodedForm({
+                    "account_id": "6426644241707400964",
+                })
+            });
+            console.log("response", JSON.stringify(response.data, null, 2))
             const balances: { asset: string, balance: number }[] = response.data.balance
             const btcBalance = balances.find((balance) => balance.asset === 'XBT');
             return btcBalance ? btcBalance.balance : 0;

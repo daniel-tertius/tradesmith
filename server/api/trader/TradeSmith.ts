@@ -30,11 +30,13 @@ export default class TradeSmith {
         this.waitForValue.sell = options.waitForValue?.sell ?? null;
     }
 
-    start() {
+    async start() {
         try {
-            const executeAction = this.executeAction.bind(this);
-            executeAction();
-            this.loop = setInterval(executeAction, this.idleTime);
+            const balance = await this.LunoTrader.queryBTCBalance();
+            console.log("BALANCE", JSON.stringify(balance, null, 2))
+            // const executeAction = this.executeAction.bind(this);
+            // executeAction();
+            // this.loop = setInterval(executeAction, this.idleTime);
         } catch (error: any) {
             // console.error(isError(error) ? error.stack : JSON.stringify(error, (k, v) => substring(v), 2));
             console.error(error.message);

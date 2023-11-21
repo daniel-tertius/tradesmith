@@ -1,6 +1,6 @@
 import { Db, MongoClient, ObjectId } from "mongodb";
 import express, { Router } from 'express';
-import Tradesmith from "./trader/TradeSmith"
+import Tradesmith from "./trader2/Tradesmith"
 
 import dotenv from 'dotenv';
 dotenv.config();
