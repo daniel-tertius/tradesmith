@@ -68,6 +68,7 @@ export default class LunoTrader {
             const response = await axios.get(url, headers);
             const balances: { asset: string, balance: number }[] = response.data.balance
             const zarBalance = balances.find((balance) => balance.asset === 'ZAR');
+            console.log("Queried ZAR Balance:", zarBalance?.balance)
             return zarBalance ? zarBalance.balance : NaN;
         } catch (error: any) {
             console.error('Failed to fetch ZAR balance:', error.message);
@@ -83,6 +84,7 @@ export default class LunoTrader {
             const response = await axios.get(url, headers);
             const balances: { asset: string, balance: number }[] = response.data.balance
             const btcBalance = balances.find((balance) => balance.asset === 'XBT');
+            console.log("Queried BTC Balance", btcBalance?.balance)
             return btcBalance ? btcBalance.balance : 0;
         } catch (error: any) {
             console.error('Failed to fetch BTC balance:', error.message);
@@ -169,49 +171,42 @@ export default class LunoTrader {
         if (!url) throw Error("Could not find Luno Trade URL");
 
         try {
-            if (this.isDebugging) return { success: true }
-            const response = await axios({
-                method: "post",
-                url: "https://api.luno.com/api/1/postorder",
-                auth: {
-                    username: process.env.LUNO_API_KEY as string,
-                    password: process.env.LUNO_API_SECRET as string
-                },
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                },
-                data: jsonToURLEncodedForm({
-                    "pair": "XBTZAR",
-                    "type": type,
-                    "volume": btcAmount.toString(),
-                    "price": btcPrice.toString()
-                })
-            });
+            if (this.isDebugging) {
+                console.log("[TRADESMITH DEBUGGING] Sudo Success Trade.")
+                return { success: true }
+            }
+
+            const headers = this.getHeaders();
+            const data = {
+                "pair": "XBTZAR",
+                "type": type,
+                "volume": btcAmount.toString(),
+                "price": btcPrice.toString(),
+                "base_account_id": "6426644241707400964"
+            }
+
+            const response = await axios.post(url, data, headers)
 
             const success = response.status.toString().startsWith("2");
             console.log(success ? "Success :)" : "Failed :(");
 
             return { success };
         } catch (error: any) {
-            console.log("Failed trade", error?.message);
-            throw Error("Failed to trade");
+            console.log("Failed trade", error)
+            console.log("Failed :(");
+            return { success: false };
         }
     }
 }
 
-function jsonToURLEncodedForm(json: Record<string, string | number> = {}) {
-    console.log("JSON TO URL:", Object.entries(json).map(([key, value]) => `${key}=${value}`).join('&'))
-    return Object.entries(json).map(([key, value]) => `${key}=${value}`).join('&');
-}
-
 export async function getLastPrice(): Promise<number> {
-    const lunoUrl = process.env.LUNO_GET_PRICE_URL;
-    if (!lunoUrl) {
+    const url = process.env.LUNO_GET_PRICE_URL;
+    if (!url) {
         throw new Error('Could not find the LUNO API URL.');
     }
 
     try {
-        const response = await axios.get(lunoUrl);
+        const response = await axios.get(url);
         const data = response.data;
         return data.last_trade;
     } catch (error: any) {
@@ -221,13 +216,13 @@ export async function getLastPrice(): Promise<number> {
 }
 
 export async function getCurrentBuyPrice(): Promise<number> {
-    const lunoUrl = process.env.LUNO_GET_PRICE_URL;
-    if (!lunoUrl) {
+    const url = process.env.LUNO_GET_PRICE_URL;
+    if (!url) {
         throw new Error('Could not find the LUNO API URL.');
     }
 
     try {
-        const response = await axios.get(lunoUrl);
+        const response = await axios.get(url);
         const data = response.data;
         return data.bid - 1;
     } catch (error: any) {

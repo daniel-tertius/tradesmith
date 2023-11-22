@@ -96,7 +96,7 @@ export default class TradeSmith {
         },
 
         setNextBuyAndSellOrder: async () => {
-            this.buyPrices = (!this.buyPrices?.length) ? this.buyPrices : [await getCurrentBuyPrice()];
+            this.buyPrices = (this.buyPrices?.length) ? this.buyPrices : [await getCurrentBuyPrice()];
             console.log(`[TRADESMITH - setNextBuyAndSellOrder] BuyPrices: ${this.buyPrices}`);
 
             // Set up next buy and sell orders.
@@ -110,6 +110,8 @@ export default class TradeSmith {
         },
 
         buy: async () => {
+            console.log("BUY ACTION EXECUTING")
+
             const currentBuyPrice = await getCurrentBuyPrice();
             await this.LunoTrader.buyBTC(this.btcTradeAmount, currentBuyPrice);
             this.buyPrices.push(currentBuyPrice);
@@ -121,21 +123,26 @@ export default class TradeSmith {
         },
 
         wait: async () => {
+            console.log("WAIT ACTION EXECUTING")
             if (this.waitForValue.sell == null || this.waitForValue.buy == null) {
                 throw Error(`Status cannot be 'wait' while waitForValue has value of: ${JSON.stringify(this.waitForValue)}.`);
             }
 
             // const btcPrice = await getLastPrice();
             const openOrders = await this.LunoTrader.getOpenOrders();
+            console.log(`Found Open Orders: ${JSON.stringify(openOrders, null, 2)}`)
 
             const boughtOrder = openOrders?.find(({ type, state, limit_price }) =>
-                type === "BUY" && state === "COMPLETE" && limit_price === this.waitForValue.buy?.toString()
+                type === "BUY" && state === "PENDING" && limit_price === this.waitForValue.buy?.toString()
             );
             const soldOrder = openOrders?.find(({ type, state, limit_price }) =>
-                type === "SELL" && state === "COMPLETE" && limit_price === this.waitForValue.sell?.toString()
+                type === "SELL" && state === "PENDING" && limit_price === this.waitForValue.sell?.toString()
             );
 
-            if (!boughtOrder && soldOrder) {
+            const hasBoughtBtc = !boughtOrder && soldOrder;
+            const hasSoldBtc = !soldOrder && boughtOrder;
+            
+            if (hasBoughtBtc) {
                 this.LunoTrader.cancelOrder(soldOrder.order_id);
 
                 // If bot bought 5 times in a row, sell all btc there is.
@@ -144,7 +151,7 @@ export default class TradeSmith {
                     this.updateStatus('kill');
                     return this.action.sellAllBTC(this.buyPrices);
                 }
-            } else if (!soldOrder && boughtOrder) {
+            } else if (hasSoldBtc) {
                 this.LunoTrader.cancelOrder(boughtOrder.order_id);
             }
 
@@ -152,9 +159,11 @@ export default class TradeSmith {
         },
 
         kill: () => {
+            console.log("KILL ACTION EXECUTING")
+
             if (!this.loop) return;
 
-            clearInterval(this.loop);
+            clearInterval(this.loop as NodeJS.Timeout);
         }
     }
 }

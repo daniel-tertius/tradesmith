@@ -5,4 +5,4 @@ npx tsc || { echo "Error: TypeScript compilation failed."; exit 1; }
 
 # Run the Node.js server
 echo "Done Compiling Tradesmith API! 🛠️"
-node dist/server/api/index.js || { echo "Error: Unable to start server."; exit 1; }
+node dist/index.js || { echo "Error: Unable to start server."; exit 1; }
