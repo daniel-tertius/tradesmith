@@ -29,5 +29,5 @@ export type lunoOrder = {
         "pair": string,
         "state": "PENDING" | "COMPLETE",
         "time_in_force": string,
-        "type": "BUY" | "SELL"
+        "type": "BID" | "ASK"
     }

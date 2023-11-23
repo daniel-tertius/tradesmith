@@ -24,7 +24,7 @@ export default class LunoTrader {
         }
 
         const result = await this.trade("BID", btcPrice, btcBuyAmount);
-        if (!this.isDebugging) {
+        if (false) {// TODO
             await DB.log.create({
                 title: `Bought BTC`,
                 created_at: new Date(),
@@ -46,7 +46,7 @@ export default class LunoTrader {
         }
 
         const result = await this.trade('ASK', btcPrice, btcSellAmount);
-        if (!this.isDebugging) {
+        if (false) { // TODO
             await DB.log.create({
                 title: `Sold BTC`,
                 created_at: new Date(),
@@ -65,11 +65,10 @@ export default class LunoTrader {
         const url = this.getLunoBalanceURL()
 
         try {
-            const response = await axios.get(url, headers);
-            const balances: { asset: string, balance: number }[] = response.data.balance
-            const zarBalance = balances.find((balance) => balance.asset === 'ZAR');
-            console.log("Queried ZAR Balance:", zarBalance?.balance)
-            return zarBalance ? zarBalance.balance : NaN;
+            const response = await axios.get(`${url}?assets=ZAR`, headers);
+            const balance = response.data.balance[0];
+            console.log("[TRADESMITH - queryZARBalance] ZAR Balance:", balance.balance)
+            return balance ? balance.balance : NaN;
         } catch (error: any) {
             console.error('Failed to fetch ZAR balance:', error.message);
             return NaN;
@@ -81,11 +80,11 @@ export default class LunoTrader {
         const url = this.getLunoBalanceURL()
 
         try {
-            const response = await axios.get(url, headers);
-            const balances: { asset: string, balance: number }[] = response.data.balance
-            const btcBalance = balances.find((balance) => balance.asset === 'XBT');
-            console.log("Queried BTC Balance", btcBalance?.balance)
-            return btcBalance ? btcBalance.balance : 0;
+            const response = await axios.get(`${url}?assets=XBT`, headers);
+            const balance = response.data.balance[0];
+            console.log("[TRADESMITH - queryBTCBalance] BTC Balance:", balance.balance)
+
+            return balance ? balance.balance : 0;
         } catch (error: any) {
             console.error('Failed to fetch BTC balance:', error.message);
             return 0;
@@ -98,7 +97,7 @@ export default class LunoTrader {
         if (!url) throw Error("Could not find Luno Open Orders URL");
 
         try {
-            const response = await axios.get(url, headers);
+            const response = await axios.get(`${url}?state=PENDING`, headers);
             return response.data.orders;
         } catch (error: any) {
             const errorText = isError(error) ? error.stack : JSON.stringify(error, (k, v) => substring(v), 2)
@@ -181,8 +180,7 @@ export default class LunoTrader {
                 "pair": "XBTZAR",
                 "type": type,
                 "volume": btcAmount.toString(),
-                "price": btcPrice.toString(),
-                "base_account_id": "6426644241707400964"
+                "price": btcPrice.toFixed(0),
             }
 
             const response = await axios.post(url, data, headers)
@@ -192,9 +190,7 @@ export default class LunoTrader {
 
             return { success };
         } catch (error: any) {
-            console.log("Failed trade", error)
-            console.log("Failed :(");
-            return { success: false };
+            throw Error(error.response.data.error)
         }
     }
 }
@@ -224,7 +220,7 @@ export async function getCurrentBuyPrice(): Promise<number> {
     try {
         const response = await axios.get(url);
         const data = response.data;
-        return data.bid - 1;
+        return +data.bid;
     } catch (error: any) {
         console.error('Failed to fetch last price:', error.message);
         throw new Error('Failed to fetch last price.');

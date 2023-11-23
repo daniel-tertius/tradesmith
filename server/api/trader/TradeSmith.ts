@@ -48,7 +48,7 @@ export default class TradeSmith {
     }
 
     private async executeAction() {
-        console.log("Tradesmith 'this':", JSON.stringify(this, null, 2))
+        console.log("Tradesmith 'this':", JSON.stringify(this, (key, value) => key === "loop" ? "-" : value, 2))
         await this.action[this.status]();
     }
 
@@ -102,11 +102,11 @@ export default class TradeSmith {
             // Set up next buy and sell orders.
             const sellPrice = this.action.getNextSellAtPrice(this.buyPrices);
             await this.LunoTrader.sellBTC(this.btcTradeAmount, sellPrice);
-            this.waitForValue.sell = sellPrice;
+            this.waitForValue.sell = Math.trunc(sellPrice);
 
             const buyPrice = this.action.getNextBuyAtPrice(this.buyPrices);
             await this.LunoTrader.buyBTC(this.btcTradeAmount, buyPrice);
-            this.waitForValue.buy = buyPrice;
+            this.waitForValue.buy = Math.trunc(buyPrice);
         },
 
         buy: async () => {
@@ -132,16 +132,17 @@ export default class TradeSmith {
             const openOrders = await this.LunoTrader.getOpenOrders();
             console.log(`Found Open Orders: ${JSON.stringify(openOrders, null, 2)}`)
 
-            const boughtOrder = openOrders?.find(({ type, state, limit_price }) =>
-                type === "BUY" && state === "PENDING" && limit_price === this.waitForValue.buy?.toString()
+            const boughtOrder = openOrders?.find(({ type, limit_price }) =>
+                type === "BID" && limit_price === this.waitForValue.buy?.toFixed(2)
             );
-            const soldOrder = openOrders?.find(({ type, state, limit_price }) =>
-                type === "SELL" && state === "PENDING" && limit_price === this.waitForValue.sell?.toString()
+            const soldOrder = openOrders?.find(({ type, limit_price }) =>
+                type === "ASK" && limit_price === this.waitForValue.sell?.toFixed(2)
             );
 
             const hasBoughtBtc = !boughtOrder && soldOrder;
             const hasSoldBtc = !soldOrder && boughtOrder;
-            
+            console.log(`[TRADESMITH - wait] boughtOrder: ${!!boughtOrder} | soldOrder ${!!soldOrder}`)
+
             if (hasBoughtBtc) {
                 this.LunoTrader.cancelOrder(soldOrder.order_id);
 
@@ -151,11 +152,13 @@ export default class TradeSmith {
                     this.updateStatus('kill');
                     return this.action.sellAllBTC(this.buyPrices);
                 }
+
+                this.action.setNextBuyAndSellOrder();
             } else if (hasSoldBtc) {
                 this.LunoTrader.cancelOrder(boughtOrder.order_id);
-            }
 
-            this.action.setNextBuyAndSellOrder();
+                this.action.setNextBuyAndSellOrder();
+            }
         },
 
         kill: () => {
